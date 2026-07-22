@@ -1,0 +1,158 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { BUSINESS, SITE_NAME } from '../consts';
+
+const a = BUSINESS.address;
+const aggiornamento = '22 luglio 2026';
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description="Informativa sul trattamento dei dati personali di GSA di Grassi Simona Adele, ai sensi del Regolamento (UE) 2016/679 (GDPR)."
+>
+  <article class="mx-auto max-w-3xl px-6 py-16 sm:py-20">
+    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">Privacy Policy</h1>
+    <p class="mt-3 text-sm text-neutral-500">Ultimo aggiornamento: {aggiornamento}</p>
+
+    <div class="mt-10 space-y-8 leading-relaxed text-neutral-700">
+      <p>
+        Questa informativa descrive come vengono trattati i dati personali degli utenti che
+        consultano questo sito o utilizzano il modulo di contatto, ai sensi del Regolamento (UE)
+        2016/679 (GDPR) e del D.lgs. 196/2003 aggiornato.
+      </p>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">1. Titolare del trattamento</h2>
+        <p class="mt-2">
+          {SITE_NAME} (impresa individuale), {a.street}, {a.postalCode}
+          {a.city} ({a.province}). P.IVA {BUSINESS.vatId}.<br />
+          Email: <a
+            class="decoration-brand underline decoration-2 underline-offset-4"
+            href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a
+          > · Telefono:
+          <a
+            class="decoration-brand underline decoration-2 underline-offset-4"
+            href={`tel:${BUSINESS.phoneE164}`}>{BUSINESS.phone}</a
+          >.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">2. Dati che trattiamo</h2>
+        <ul class="mt-2 list-disc space-y-2 pl-6">
+          <li>
+            <strong>Dati del modulo di contatto</strong>: nome e cognome, indirizzo email, numero di
+            telefono (facoltativo) e il contenuto del messaggio, che ci fornisci volontariamente per
+            essere ricontattato.
+          </li>
+          <li>
+            <strong>Dati di navigazione</strong>: per il funzionamento e la sicurezza del sito, il
+            fornitore di hosting può registrare in log tecnici dati come indirizzo IP, tipo di
+            browser e data/ora della richiesta.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">3. Finalità e basi giuridiche</h2>
+        <ul class="mt-2 list-disc space-y-2 pl-6">
+          <li>
+            Rispondere alle richieste inviate tramite il modulo di contatto: base giuridica il
+            <strong>consenso</strong> dell'interessato (art. 6.1.a) e/o l'esecuzione di misure precontrattuali
+            su tua richiesta (art. 6.1.b).
+          </li>
+          <li>
+            Garantire sicurezza e corretto funzionamento del sito: <strong
+              >legittimo interesse</strong
+            >
+            del titolare (art. 6.1.f).
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">4. Destinatari e responsabili</h2>
+        <p class="mt-2">
+          I dati non vengono ceduti né venduti a terzi. Per erogare il servizio ci avvaliamo di
+          fornitori che agiscono come responsabili del trattamento:
+        </p>
+        <ul class="mt-2 list-disc space-y-2 pl-6">
+          <li>
+            <strong>Netlify, Inc.</strong> (hosting del sito e gestione degli invii del modulo).
+          </li>
+          <li>
+            <strong>Google Ireland Ltd. / Google LLC</strong> (servizio email tramite cui riceviamo i
+            messaggi).
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">5. Trasferimenti fuori dall'Unione Europea</h2>
+        <p class="mt-2">
+          Alcuni fornitori (es. Netlify e Google) possono trattare dati anche negli Stati Uniti. In
+          tal caso il trasferimento avviene sulla base di garanzie adeguate previste dal GDPR, come
+          le Clausole Contrattuali Standard della Commissione Europea.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">6. Conservazione</h2>
+        <p class="mt-2">
+          I messaggi ricevuti sono conservati per il tempo necessario a gestire la tua richiesta e
+          ad adempiere a eventuali obblighi di legge, e comunque non oltre 24 mesi dall'ultimo
+          contatto, salvo diverse esigenze. I log tecnici sono conservati secondo le policy del
+          fornitore di hosting.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">7. I tuoi diritti</h2>
+        <p class="mt-2">
+          Ai sensi degli artt. 15-22 del GDPR hai diritto di accedere ai tuoi dati, chiederne la
+          rettifica o la cancellazione, la limitazione o l'opposizione al trattamento, la
+          portabilità, e di revocare in qualsiasi momento il consenso prestato. Per esercitare
+          questi diritti scrivi a <a
+            class="decoration-brand underline decoration-2 underline-offset-4"
+            href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a
+          >.
+        </p>
+        <p class="mt-2">
+          Hai inoltre il diritto di proporre reclamo all'autorità di controllo, il
+          <a
+            class="decoration-brand underline decoration-2 underline-offset-4"
+            href="https://www.garanteprivacy.it"
+            target="_blank"
+            rel="noopener noreferrer">Garante per la protezione dei dati personali</a
+          >.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">8. Processi decisionali automatizzati</h2>
+        <p class="mt-2">
+          Non effettuiamo profilazione né processi decisionali automatizzati sui tuoi dati.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">9. Cookie</h2>
+        <p class="mt-2">
+          Questo sito non utilizza cookie di profilazione o strumenti di analisi di terze parti. Per
+          i dettagli consulta la <a
+            class="decoration-brand underline decoration-2 underline-offset-4"
+            href="/cookie-policy/">Cookie Policy</a
+          >.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">10. Modifiche</h2>
+        <p class="mt-2">
+          Questa informativa può essere aggiornata nel tempo. La versione vigente è sempre
+          pubblicata su questa pagina, con la data di ultimo aggiornamento.
+        </p>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
