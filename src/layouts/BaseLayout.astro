@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Newsletter from '../components/Newsletter.astro';
 import ChatBot from '../components/ChatBot.astro';
+import CookieBanner from '../components/CookieBanner.astro';
 import SchemaOrg from '../components/SchemaOrg.astro';
 import { SITE_LANG } from '../consts';
 import logo from '../assets/logo-gsa.png';
@@ -69,6 +70,7 @@ const { title, description, image, canonical, noindex } = Astro.props;
     <Newsletter />
     <Footer />
     <ChatBot />
+    <CookieBanner />
 
     {/* Reveal allo scroll (IntersectionObserver, minimale). */}
     <script is:inline>
