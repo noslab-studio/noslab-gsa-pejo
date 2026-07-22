@@ -1,25 +1,20 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
+// Import automatico di tutte le foto della gallery.
+const modules = import.meta.glob<{ default: ImageMetadata }>('../assets/foto/*.{jpg,jpeg,png}', {
+  eager: true,
+});
+const gallery = Object.values(modules).map((m) => m.default);
+
 const categorie = [
-  {
-    titolo: 'Aziendale e commerciale',
-    testo:
-      'Foto per la comunicazione della tua attività: prodotti, ambienti, ritratti professionali.',
-  },
-  {
-    titolo: 'Piccoli eventi',
-    testo: 'Reportage di eventi e ricorrenze, in formato digitale e pronto per la stampa.',
-  },
-  { titolo: 'Calendari', testo: 'Progetti fotografici stagionali e calendari personalizzati.' },
-  {
-    titolo: 'Famiglia e gravidanza',
-    testo: 'Gli scatti più teneri: le mamme in attesa e i momenti di famiglia.',
-  },
-  {
-    titolo: 'Paesaggi della Val di Pejo',
-    testo: 'Montagna, natura e vita di montagna — la mia terra d’adozione.',
-  },
+  'Aziendale e commerciale',
+  'Piccoli eventi',
+  'Calendari',
+  'Famiglia e gravidanza',
+  'Paesaggi della Val di Pejo',
 ];
 ---
 
@@ -27,27 +22,43 @@ const categorie = [
   title="Fotografia"
   description="Servizi fotografici a Peio: aziendale e commerciale, eventi, calendari, famiglia e gravidanza, paesaggi della Val di Pejo."
 >
-  <div class="mx-auto max-w-5xl px-6 py-20">
-    <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Fotografia</h1>
-    <p class="mt-4 max-w-2xl text-lg text-neutral-300">
+  <div class="mx-auto max-w-5xl px-6 py-16 sm:py-20">
+    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
+      <span class="evidenzia">Fotografia</span>
+    </h1>
+    <p class="mt-4 max-w-2xl text-lg text-neutral-700">
       Servizi fotografici a fini pubblicitari e commerciali, ma anche i momenti più personali. Tutto
       in formato digitale.
     </p>
 
-    <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul class="mt-6 flex flex-wrap gap-2">
       {
         categorie.map((c) => (
-          <li class="rounded-xl border border-white/10 bg-white/5 p-6">
-            <h2 class="font-semibold text-amber-400">{c.titolo}</h2>
-            <p class="mt-2 text-sm text-neutral-300">{c.testo}</p>
-          </li>
+          <li class="rounded-full bg-neutral-100 px-3 py-1 text-sm text-neutral-700">{c}</li>
         ))
       }
     </ul>
 
-    <p class="mt-12 rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-neutral-400">
-      La galleria fotografica sarà pubblicata a breve. Nel frattempo, per vedere i lavori scrivimi:
-      sarò felice di mostrarti il portfolio completo.
+    <div class="mt-12 columns-2 gap-4 sm:columns-3">
+      {
+        gallery.map((img, i) => (
+          <Image
+            src={img}
+            alt={`Scatto dal portfolio fotografico di GSA di Grassi Simona Adele (${i + 1})`}
+            widths={[300, 500, 800]}
+            sizes="(min-width: 640px) 30vw, 45vw"
+            class="mb-4 w-full rounded-xl object-cover"
+            loading={i < 4 ? 'eager' : 'lazy'}
+          />
+        ))
+      }
+    </div>
+
+    <p class="mt-12 rounded-2xl border border-neutral-200 bg-neutral-50 p-5 text-neutral-700">
+      Vuoi un servizio fotografico su misura? <a
+        href="/contatti/"
+        class="decoration-brand font-semibold underline decoration-2 underline-offset-4">Scrivimi</a
+      > e ne parliamo.
     </p>
   </div>
 </BaseLayout>

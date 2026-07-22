@@ -2,6 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
 import SchemaOrg from '../components/SchemaOrg.astro';
 import { SITE_LANG } from '../consts';
 import '../styles/global.css';
@@ -26,10 +27,10 @@ const { title, description, image, canonical, noindex } = Astro.props;
       <slot name="jsonld" />
     </BaseHead>
   </head>
-  <body class="min-h-screen bg-neutral-950 text-neutral-100 antialiased">
+  <body class="text-ink min-h-screen bg-white antialiased">
     <a
       href="#contenuto"
-      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded focus:bg-amber-400 focus:px-4 focus:py-2 focus:text-neutral-950"
+      class="focus:bg-brand focus:text-ink sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded focus:px-4 focus:py-2 focus:font-medium"
     >
       Vai al contenuto
     </a>
@@ -41,5 +42,6 @@ const { title, description, image, canonical, noindex } = Astro.props;
     </main>
 
     <Footer />
+    <WhatsAppButton />
   </body>
 </html>

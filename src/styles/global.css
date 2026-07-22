@@ -1,14 +1,41 @@
 @import 'tailwindcss';
 
+/* Token di brand GSA (usati come utility: bg-brand, text-ink, ...). */
+@theme {
+  --color-brand: #ffdd00; /* giallo GSA */
+  --color-brand-lime: #9ee13a; /* lime */
+  --color-ink: #16160f; /* quasi nero, per il testo */
+}
+
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+body {
+  background-color: #ffffff;
+}
+
 ::selection {
-  background-color: #fbbf24; /* amber-400 */
-  color: #0a0a0a;
+  background-color: var(--color-brand);
+  color: var(--color-ink);
+}
+
+/* Effetto evidenziatore per dare "pop" alle parole chiave. */
+.evidenzia {
+  background-image: linear-gradient(transparent 62%, var(--color-brand) 62%);
+  padding-inline: 0.1em;
+}
+.evidenzia-lime {
+  background-image: linear-gradient(transparent 62%, var(--color-brand-lime) 62%);
+  padding-inline: 0.1em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

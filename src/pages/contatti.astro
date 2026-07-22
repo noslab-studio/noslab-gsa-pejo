@@ -4,55 +4,150 @@ import { BUSINESS } from '../consts';
 
 const a = BUSINESS.address;
 const mapsQuery = encodeURIComponent(`${a.street}, ${a.postalCode} ${a.city} ${a.province}`);
+
+const inputClass =
+  'mt-1 w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-ink shadow-sm focus:border-ink focus:outline-2 focus:outline-brand';
 ---
 
 <BaseLayout
   title="Contatti"
-  description="Contatta GSA di Grassi Simona Adele: Via San Giorgio 15, 38024 Peio (TN). Telefono, email e indirizzo."
+  description="Contatta GSA di Grassi Simona Adele: Via San Giorgio 15, 38024 Peio (TN). Telefono, email e modulo di contatto."
 >
-  <div class="mx-auto max-w-3xl px-6 py-20">
-    <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Contatti</h1>
-    <p class="mt-4 text-lg text-neutral-300">
+  <div class="mx-auto max-w-5xl px-6 py-16 sm:py-20">
+    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
+      <span class="evidenzia">Contatti</span>
+    </h1>
+    <p class="mt-4 max-w-2xl text-lg text-neutral-700">
       Scrivimi o chiamami: rispondo volentieri e troviamo insieme la soluzione più adatta.
     </p>
 
-    <dl class="mt-12 grid gap-8 sm:grid-cols-2">
-      <div>
-        <dt class="text-sm font-medium tracking-widest text-amber-400 uppercase">Telefono</dt>
-        <dd class="mt-2 text-lg">
-          <a class="hover:underline" href={`tel:${BUSINESS.phoneE164}`}>{BUSINESS.phone}</a>
-        </dd>
-      </div>
-      <div>
-        <dt class="text-sm font-medium tracking-widest text-amber-400 uppercase">Email</dt>
-        <dd class="mt-2 text-lg">
-          <a class="hover:underline" href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a>
-        </dd>
-      </div>
-      <div>
-        <dt class="text-sm font-medium tracking-widest text-amber-400 uppercase">Indirizzo</dt>
-        <dd class="mt-2 text-lg">
-          <address class="not-italic">
-            {a.street}<br />{a.postalCode}
-            {a.city} ({a.province})
-          </address>
-          <a
-            class="mt-2 inline-block text-sm text-amber-400 hover:underline"
-            href={`https://www.openstreetmap.org/search?query=${mapsQuery}`}
-            target="_blank"
-            rel="noopener noreferrer"
+    <div class="mt-12 grid gap-12 lg:grid-cols-2">
+      {/* Modulo di contatto (Netlify Forms) */}
+      <section>
+        <h2 class="text-2xl font-bold">Scrivimi</h2>
+        <form
+          name="contatti"
+          method="POST"
+          action="/grazie/"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          class="mt-6 space-y-5"
+        >
+          <input type="hidden" name="form-name" value="contatti" />
+          <p class="hidden">
+            <label>Non compilare: <input name="bot-field" /></label>
+          </p>
+
+          <div>
+            <label for="nome" class="text-ink text-sm font-medium">Nome e cognome</label>
+            <input
+              id="nome"
+              name="nome"
+              type="text"
+              required
+              class={inputClass}
+              autocomplete="name"
+            />
+          </div>
+
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label for="email" class="text-ink text-sm font-medium">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                class={inputClass}
+                autocomplete="email"
+              />
+            </div>
+            <div>
+              <label for="telefono" class="text-ink text-sm font-medium">
+                Telefono <span class="text-neutral-400">(facoltativo)</span>
+              </label>
+              <input
+                id="telefono"
+                name="telefono"
+                type="tel"
+                class={inputClass}
+                autocomplete="tel"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label for="messaggio" class="text-ink text-sm font-medium">Messaggio</label>
+            <textarea id="messaggio" name="messaggio" rows="5" required class={inputClass}
+            ></textarea>
+          </div>
+
+          <label class="flex items-start gap-3 text-sm text-neutral-600">
+            <input type="checkbox" name="privacy" required class="accent-brand mt-1 h-4 w-4" />
+            <span>
+              Acconsento al trattamento dei miei dati per rispondere alla richiesta. I dati non
+              vengono ceduti a terzi.
+            </span>
+          </label>
+
+          <button
+            type="submit"
+            class="bg-brand text-ink rounded-full px-7 py-3 font-semibold transition hover:brightness-95"
           >
-            Apri nella mappa →
-          </a>
-        </dd>
-      </div>
-      <div>
-        <dt class="text-sm font-medium tracking-widest text-amber-400 uppercase">Impresa</dt>
-        <dd class="mt-2 text-lg">
-          Impresa individuale<br />
-          <span class="text-neutral-300">P.IVA {BUSINESS.vatId}</span>
-        </dd>
-      </div>
-    </dl>
+            Invia messaggio
+          </button>
+        </form>
+      </section>
+
+      {/* Recapiti */}
+      <section>
+        <h2 class="text-2xl font-bold">Recapiti</h2>
+        <dl class="mt-6 space-y-6">
+          <div>
+            <dt class="text-sm font-semibold tracking-widest text-neutral-500 uppercase">
+              Telefono
+            </dt>
+            <dd class="mt-1 text-lg">
+              <a
+                class="decoration-brand underline decoration-2 underline-offset-4"
+                href={`tel:${BUSINESS.phoneE164}`}>{BUSINESS.phone}</a
+              >
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold tracking-widest text-neutral-500 uppercase">Email</dt>
+            <dd class="mt-1 text-lg">
+              <a
+                class="decoration-brand underline decoration-2 underline-offset-4"
+                href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a
+              >
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold tracking-widest text-neutral-500 uppercase">
+              Indirizzo
+            </dt>
+            <dd class="mt-1 text-lg">
+              <address class="not-italic">
+                {a.street}<br />{a.postalCode}
+                {a.city} ({a.province})
+              </address>
+              <a
+                class="decoration-brand mt-1 inline-block text-sm underline decoration-2 underline-offset-4"
+                href={`https://www.openstreetmap.org/search?query=${mapsQuery}`}
+                target="_blank"
+                rel="noopener noreferrer">Apri nella mappa</a
+              >
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold tracking-widest text-neutral-500 uppercase">
+              Impresa
+            </dt>
+            <dd class="mt-1 text-lg">Impresa individuale · P.IVA {BUSINESS.vatId}</dd>
+          </div>
+        </dl>
+      </section>
+    </div>
   </div>
 </BaseLayout>

@@ -1,5 +1,7 @@
 ---
-import { NAV, SITE_NAME } from '../consts';
+import { Image } from 'astro:assets';
+import { NAV } from '../consts';
+import logo from '../assets/logo-gsa.png';
 
 // Normalizza il pathname corrente per evidenziare la voce attiva.
 const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
@@ -7,23 +9,29 @@ const isActive = (href: string) => {
   const h = href.replace(/\/+$/, '') || '/';
   return h === current;
 };
+
+const linkBase =
+  'aria-[current=page]:font-semibold aria-[current=page]:underline aria-[current=page]:decoration-brand aria-[current=page]:decoration-[3px] aria-[current=page]:underline-offset-8';
 ---
 
-<header class="border-b border-white/10">
-  <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-    <a href="/" class="text-lg font-semibold tracking-tight text-amber-400"> {SITE_NAME} </a>
+<header class="sticky top-0 z-30 border-b border-neutral-200 bg-white/90 backdrop-blur">
+  <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
+    <a href="/" class="flex items-center gap-2" aria-label="GSA di Grassi Simona Adele, home">
+      <Image src={logo} alt="" width={40} height={40} class="h-10 w-10" />
+      <span class="text-ink text-base font-bold tracking-tight">GSA</span>
+    </a>
 
     {/* Menu mobile: disclosure accessibile senza JavaScript */}
     <details class="group relative sm:hidden">
       <summary
-        class="flex cursor-pointer list-none items-center gap-2 rounded px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-amber-400"
+        class="focus-visible:outline-brand flex cursor-pointer list-none items-center gap-2 rounded px-3 py-2 text-sm font-medium focus-visible:outline-2"
         aria-label="Apri il menu"
       >
         Menu
       </summary>
       <nav
         aria-label="Navigazione principale"
-        class="absolute right-0 z-10 mt-2 w-48 rounded-lg border border-white/10 bg-neutral-900 p-2 shadow-xl"
+        class="absolute right-0 z-10 mt-2 w-52 rounded-lg border border-neutral-200 bg-white p-2 shadow-xl"
       >
         <ul class="flex flex-col gap-1">
           {
@@ -32,7 +40,7 @@ const isActive = (href: string) => {
                 <a
                   href={item.href}
                   aria-current={isActive(item.href) ? 'page' : undefined}
-                  class="block rounded px-3 py-2 text-sm hover:bg-white/10 aria-[current=page]:text-amber-400"
+                  class={`block rounded px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100 ${linkBase}`}
                 >
                   {item.label}
                 </a>
@@ -45,14 +53,14 @@ const isActive = (href: string) => {
 
     {/* Navigazione desktop */}
     <nav aria-label="Navigazione principale" class="hidden sm:block">
-      <ul class="flex items-center gap-6 text-sm">
+      <ul class="flex items-center gap-7 text-sm">
         {
           NAV.map((item) => (
             <li>
               <a
                 href={item.href}
                 aria-current={isActive(item.href) ? 'page' : undefined}
-                class="text-neutral-300 transition-colors hover:text-white aria-[current=page]:font-medium aria-[current=page]:text-amber-400"
+                class={`hover:text-ink text-neutral-700 transition-colors ${linkBase}`}
               >
                 {item.label}
               </a>

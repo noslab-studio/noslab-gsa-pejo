@@ -12,25 +12,36 @@ const rendered = await Promise.all(
   title="Servizi"
   description="Pubblicità digitale e social, servizi fotografici, pubblicità tradizionale, gestione ufficio e fatturazione elettronica."
 >
-  <div class="mx-auto max-w-3xl px-6 py-20">
-    <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Servizi offerti</h1>
-    <p class="mt-4 text-lg text-neutral-300">
+  <div class="mx-auto max-w-3xl px-6 py-16 sm:py-20">
+    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
+      Servizi <span class="evidenzia">offerti</span>
+    </h1>
+    <p class="mt-4 text-lg text-neutral-700">
       Un'attività polivalente: dalla comunicazione digitale alla fotografia, fino alla gestione
       amministrativa. Ecco di cosa mi occupo.
     </p>
 
-    <div class="mt-12 space-y-10">
+    <div class="mt-12 space-y-8">
       {
         rendered.map(({ data, Content }) => (
-          <section class="border-t border-white/10 pt-8">
-            <h2 class="text-2xl font-semibold text-amber-400">{data.titolo}</h2>
-            <p class="mt-2 font-medium text-neutral-200">{data.descrizione}</p>
-            <div class="mt-3 leading-relaxed text-neutral-300">
+          <section class="hover:border-brand rounded-2xl border border-neutral-200 p-6 transition hover:shadow-md sm:p-8">
+            <h2 class="text-ink text-xl font-bold sm:text-2xl">{data.titolo}</h2>
+            <p class="mt-2 font-medium text-neutral-800">{data.descrizione}</p>
+            <div class="mt-3 leading-relaxed text-neutral-600">
               <Content />
             </div>
           </section>
         ))
       }
+    </div>
+
+    <div class="mt-12">
+      <a
+        href="/contatti/"
+        class="bg-brand text-ink rounded-full px-6 py-3 font-semibold transition hover:brightness-95"
+      >
+        Richiedi un preventivo
+      </a>
     </div>
   </div>
 </BaseLayout>
