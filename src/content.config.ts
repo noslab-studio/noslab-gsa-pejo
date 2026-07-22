@@ -35,7 +35,7 @@ const services = defineCollection({
     z.object({
       titolo: z.string(),
       descrizione: z.string(),
-      /** Nome icona (es. da un set SVG) — alternativa a `immagine`. */
+      /** Nome icona (es. da un set SVG), alternativa a `immagine`. */
       icona: z.string().optional(),
       immagine: image().optional(),
       ordine: z.number().default(0),

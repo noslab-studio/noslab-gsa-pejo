@@ -1,5 +1,5 @@
 /**
- * Configurazione globale del sito — GSA di Grassi Simona Adele.
+ * Configurazione globale del sito di GSA di Grassi Simona Adele.
  * Fonte unica per branding, SEO, contatti e dati d'impresa (usati anche
  * dallo structured data). Modifica qui i valori canonici.
  */
@@ -9,7 +9,7 @@ export const SITE_URL = 'https://gsa-pejo.com';
 
 export const SITE_NAME = 'GSA di Grassi Simona Adele';
 export const SITE_TAGLINE = 'Consulente digitale e fotografia';
-export const SITE_TITLE = `${SITE_NAME} — ${SITE_TAGLINE}`;
+export const SITE_TITLE = `${SITE_NAME} · ${SITE_TAGLINE}`;
 export const SITE_DESCRIPTION =
   'GSA di Grassi Simona Adele: consulenza pubblicitaria e social, servizi fotografici, ' +
   'gestione ufficio e fatturazione elettronica. In Val di Pejo (Trentino), per aziende e privati.';
