@@ -39,7 +39,7 @@ const services = (await getCollection('services')).sort((a, b) => a.data.ordine 
         </div>
       </div>
 
-      <div class="relative">
+      <div class="reveal relative">
         <Image
           src={hero}
           alt="Simona Grassi con la macchina fotografica su una gondola a Venezia"
@@ -57,7 +57,7 @@ const services = (await getCollection('services')).sort((a, b) => a.data.ordine 
   </section>
 
   {/* Intro */}
-  <section class="mx-auto max-w-3xl px-6 py-12">
+  <section class="reveal mx-auto max-w-3xl px-6 py-12">
     <p class="text-lg leading-relaxed text-neutral-700">
       GSA di Grassi Simona Adele è un'attività polivalente con base a
       <span class="evidenzia-lime">Peio</span>, nel cuore della Val di Pejo. Mi occupo soprattutto
@@ -76,10 +76,10 @@ const services = (await getCollection('services')).sort((a, b) => a.data.ordine 
         >Tutti i servizi</a
       >
     </div>
-    <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul class="reveal mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {
         services.map((s) => (
-          <li class="hover:border-brand rounded-2xl border border-neutral-200 bg-white p-6 transition hover:shadow-md">
+          <li class="hover:border-brand rounded-2xl border border-neutral-200 bg-white p-6 transition hover:-translate-y-1 hover:shadow-md">
             <h3 class="text-ink font-bold">{s.data.titolo}</h3>
             <p class="mt-2 text-sm text-neutral-600">{s.data.descrizione}</p>
           </li>
@@ -90,9 +90,9 @@ const services = (await getCollection('services')).sort((a, b) => a.data.ordine 
 
   {/* CTA finale */}
   <section class="mx-auto max-w-5xl px-6 py-12">
-    <div class="bg-ink rounded-3xl p-8 text-center text-white sm:p-14">
+    <div class="reveal bg-ink rounded-3xl p-8 text-center text-white sm:p-14">
       <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">
-        Parliamo del tuo <span class="evidenzia text-ink">progetto</span>
+        Parliamo del tuo <span class="text-brand">progetto</span>
       </h2>
       <p class="mx-auto mt-3 max-w-xl text-neutral-300">
         Un sito, una campagna social, un servizio fotografico o la gestione della fatturazione?

@@ -1,43 +1,92 @@
 ---
-import { SITE_NAME, BUSINESS } from '../consts';
+import { Image } from 'astro:assets';
+import { SITE_NAME, BUSINESS, NAV } from '../consts';
+import logo from '../assets/logo-gsa.png';
+
 const year = new Date().getFullYear();
 const a = BUSINESS.address;
 ---
 
-<footer class="mt-24 border-t border-neutral-200 bg-neutral-50">
-  <div class="mx-auto grid max-w-5xl gap-8 px-6 py-12 sm:grid-cols-3">
-    <div>
-      <p class="text-ink text-base font-bold">{SITE_NAME}</p>
-      <p class="mt-2 text-sm text-neutral-600">Consulenza digitale, social e fotografia</p>
+<footer class="text-ink bg-ink relative mt-24 overflow-hidden">
+  {/* Barra d'accento giallo → lime */}
+  <div class="from-brand via-brand-lime to-brand h-1.5 w-full bg-gradient-to-r"></div>
+
+  {/* Filigrana: profilo di montagne della Val di Pejo */}
+  <svg
+    class="pointer-events-none absolute bottom-0 left-0 w-full text-white/5"
+    viewBox="0 0 1200 200"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M0 200 L0 120 L120 60 L240 110 L360 40 L480 100 L600 30 L720 95 L840 55 L960 110 L1080 70 L1200 120 L1200 200 Z"
+      fill="currentColor"></path>
+  </svg>
+
+  <div class="relative mx-auto max-w-5xl px-6 py-16 text-white">
+    {/* Claim */}
+    <div class="flex items-center gap-3">
+      <Image src={logo} alt="" width={44} height={44} class="h-11 w-11" />
+      <span class="text-sm font-semibold tracking-widest text-white/60 uppercase">GSA</span>
     </div>
-
-    <address class="text-sm text-neutral-600 not-italic">
-      <p class="text-ink font-semibold">Contatti</p>
-      <p class="mt-2">{a.street}<br />{a.postalCode} {a.city} ({a.province})</p>
-      <p class="mt-2">
-        <a
-          class="decoration-brand hover:text-ink underline decoration-2 underline-offset-4"
-          href={`tel:${BUSINESS.phoneE164}`}>{BUSINESS.phone}</a
-        >
-      </p>
-      <p>
-        <a
-          class="decoration-brand hover:text-ink underline decoration-2 underline-offset-4"
-          href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a
-        >
-      </p>
-    </address>
-
-    <div class="text-sm text-neutral-600">
-      <p class="text-ink font-semibold">Impresa</p>
-      <p class="mt-2">Impresa individuale<br />P.IVA {BUSINESS.vatId}</p>
-    </div>
-  </div>
-
-  <div class="border-t border-neutral-200">
-    <p class="mx-auto max-w-5xl px-6 py-4 text-xs text-neutral-500">
-      © {year}
-      {SITE_NAME}. Tutti i diritti riservati.
+    <p class="mt-6 max-w-2xl text-3xl font-extrabold tracking-tight sm:text-4xl">
+      Facciamo <span class="text-brand">qualcosa che non ti aspetti</span>.
     </p>
+    <a
+      href="/contatti/"
+      class="bg-brand text-ink mt-8 inline-block rounded-full px-7 py-3 font-semibold transition hover:brightness-95"
+    >
+      Iniziamo a parlarne
+    </a>
+
+    {/* Colonne */}
+    <div class="mt-14 grid gap-10 border-t border-white/10 pt-10 sm:grid-cols-3">
+      <div>
+        <p class="text-base font-bold">{SITE_NAME}</p>
+        <p class="mt-2 text-sm text-white/60">
+          Consulenza digitale, social e fotografia in Val di Pejo
+        </p>
+      </div>
+
+      <nav aria-label="Navigazione footer">
+        <p class="text-sm font-semibold text-white/80">Pagine</p>
+        <ul class="mt-3 space-y-2 text-sm">
+          {
+            NAV.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="hover:text-brand text-white/70 underline-offset-4 transition hover:underline"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <address class="text-sm text-white/70 not-italic">
+        <p class="font-semibold text-white/80">Contatti</p>
+        <p class="mt-3">{a.street}<br />{a.postalCode} {a.city} ({a.province})</p>
+        <p class="mt-3">
+          <a class="hover:text-brand transition" href={`tel:${BUSINESS.phoneE164}`}
+            >{BUSINESS.phone}</a
+          >
+        </p>
+        <p>
+          <a class="hover:text-brand transition" href={`mailto:${BUSINESS.email}`}
+            >{BUSINESS.email}</a
+          >
+        </p>
+      </address>
+    </div>
+
+    <div
+      class="mt-10 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>© {year} {SITE_NAME} · Impresa individuale · P.IVA {BUSINESS.vatId}</p>
+      <p>Val di Pejo, Trentino</p>
+    </div>
   </div>
 </footer>

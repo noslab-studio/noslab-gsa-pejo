@@ -15,8 +15,11 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Filigrana: texture a puntini leggerissima su tutta la pagina. */
 body {
   background-color: #ffffff;
+  background-image: radial-gradient(circle, rgba(22, 22, 15, 0.045) 1px, transparent 1.6px);
+  background-size: 26px 26px;
 }
 
 ::selection {
@@ -25,13 +28,44 @@ body {
 }
 
 /* Effetto evidenziatore per dare "pop" alle parole chiave. */
+.evidenzia,
+.evidenzia-lime {
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  padding-inline: 0.1em;
+}
 .evidenzia {
   background-image: linear-gradient(transparent 62%, var(--color-brand) 62%);
-  padding-inline: 0.1em;
 }
 .evidenzia-lime {
   background-image: linear-gradient(transparent 62%, var(--color-brand-lime) 62%);
-  padding-inline: 0.1em;
+}
+
+/* ---- Animazioni (solo con JS attivo e se l'utente non chiede meno movimento) ---- */
+@media (prefers-reduced-motion: no-preference) {
+  /* Reveal: fade + salita all'ingresso in viewport. */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s ease;
+  }
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* L'evidenziatore si "disegna" da sinistra quando entra in vista. */
+  .js .evidenzia,
+  .js .evidenzia-lime {
+    background-size: 0% 100%;
+  }
+  .js .evidenzia.is-visible,
+  .js .evidenzia-lime.is-visible {
+    background-size: 100% 100%;
+    transition: background-size 0.8s ease 0.15s;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
