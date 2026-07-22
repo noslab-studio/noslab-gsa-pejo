@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE_DESCRIPTION, BUSINESS } from '../consts';
+import Feedback from '../components/Feedback.astro';
 import hero from '../assets/hero-venezia.jpg';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.ordine - b.data.ordine);
@@ -97,6 +98,9 @@ const services = (await getCollection('services')).sort((a, b) => a.data.ordine 
       }
     </ul>
   </section>
+
+  {/* Feedback / testimonianze */}
+  <Feedback />
 
   {/* CTA finale */}
   <section class="mx-auto max-w-5xl px-6 py-12">
