@@ -56,6 +56,26 @@ npm run format       # Prettier --write
 Dev server in background (gestione): `astro dev --background`, poi
 `astro dev stop | status | logs`.
 
+## Struttura d'agenzia NosLab (convenzione per progetti cliente)
+
+Vale per questo progetto e per i clienti futuri:
+
+- **Un'unica organizzazione GitHub `noslab-studio`** per tutti i progetti cliente
+  (niente org separata per cliente; owner = account `NosLab-Sas`).
+- **Naming repo**: `noslab-<cliente>-<progetto>` (es. `noslab-gsa-pejo`).
+  Repo interni NosLab: `noslab-<tool>` (es. `noslab-cms`, `noslab-team`).
+- **Regola d'oro**: *1 cliente = 1 repo `noslab-<cliente>-…` + 1 site Netlify
+  (team `noslab-sas`) + accesso **Read** scoped al solo repo per il cliente.*
+- **Permessi**: team interno `staff` con accesso completo; ai clienti si dà accesso
+  come **Outside Collaborator** in sola lettura **solo** sul loro repo (mai membri
+  pieni dell'org → non vedono gli altri clienti né gli strumenti interni).
+- **Netlify**: un site per repo, nome site = nome repo, deploy preview sulle PR;
+  dominio custom del cliente collegato al suo site.
+- **Vincolo Netlify Free**: non fa deploy di repo **privati** di proprietà di
+  un'Organization → tenere i repo cliente **pubblici** (nessun secret nel repo,
+  `.env` git-ignored) oppure passare a Netlify Pro. `noslab-gsa-pejo` è pubblico
+  per questo motivo.
+
 ## Regola di lavoro: **pianifica prima di eseguire**
 
 Procedere in modo **incrementale**. Prima di **qualsiasi azione remota o distruttiva**
