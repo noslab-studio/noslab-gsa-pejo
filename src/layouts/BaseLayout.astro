@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
 import SchemaOrg from '../components/SchemaOrg.astro';
 import { SITE_LANG } from '../consts';
+import logo from '../assets/logo-gsa.png';
 import '../styles/global.css';
 
 interface Props {
@@ -34,13 +35,21 @@ const { title, description, image, canonical, noindex } = Astro.props;
   <body class="text-ink relative min-h-screen bg-white antialiased">
     {/* Filigrana: aloni morbidi giallo/lime che scaldano il bianco. */}
     <div
-      class="pointer-events-none fixed inset-0 -z-10"
+      class="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
       aria-hidden="true"
       style="background:
         radial-gradient(38rem 38rem at 8% -6%, rgba(255,221,0,0.13), transparent 60%),
         radial-gradient(34rem 34rem at 102% 12%, rgba(158,225,58,0.13), transparent 60%),
         radial-gradient(30rem 30rem at 50% 108%, rgba(255,221,0,0.10), transparent 60%);"
     >
+      {/* Logo GSA in filigrana, tenue, presente su ogni pagina. */}
+      <img
+        src={logo.src}
+        alt=""
+        width={logo.width}
+        height={logo.height}
+        class="absolute top-1/2 -right-[6vmin] w-[46vmin] max-w-[440px] -translate-y-1/2 rotate-6 opacity-[0.06]"
+      />
     </div>
 
     <a
