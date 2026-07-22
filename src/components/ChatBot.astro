@@ -1,0 +1,200 @@
+---
+// Assistente AI di GSA. Launcher flottante + pannello. Parla con /api/chat.
+---
+
+<!-- Launcher -->
+<button
+  type="button"
+  id="chat-launcher"
+  aria-label="Apri l'assistente GSA"
+  aria-expanded="false"
+  aria-controls="chat-panel"
+  class="text-ink bg-brand focus-visible:outline-ink fixed right-5 bottom-24 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="h-7 w-7"
+    aria-hidden="true"
+  >
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+  </svg>
+</button>
+
+<!-- Pannello -->
+<section
+  id="chat-panel"
+  role="dialog"
+  aria-modal="false"
+  aria-label="Assistente GSA"
+  hidden
+  class="fixed right-5 bottom-24 z-50 flex h-[min(70vh,560px)] w-[min(92vw,380px)] flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl"
+>
+  <header class="bg-ink flex items-center justify-between px-4 py-3 text-white">
+    <div>
+      <p class="text-sm font-bold">Assistente GSA</p>
+      <p class="text-xs text-white/60">Ti rispondo io, chiedi pure</p>
+    </div>
+    <button
+      type="button"
+      id="chat-close"
+      aria-label="Chiudi"
+      class="rounded p-1 text-white/70 hover:text-white"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        class="h-5 w-5"
+        aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg
+      >
+    </button>
+  </header>
+
+  <div
+    id="chat-messages"
+    class="flex-1 space-y-3 overflow-y-auto bg-neutral-50 p-4"
+    aria-live="polite"
+  >
+  </div>
+
+  <form id="chat-form" class="flex items-end gap-2 border-t border-neutral-200 bg-white p-3">
+    <label for="chat-input" class="sr-only">Scrivi un messaggio</label>
+    <textarea
+      id="chat-input"
+      rows="1"
+      required
+      maxlength="2000"
+      placeholder="Scrivi un messaggio…"
+      class="focus:outline-brand text-ink max-h-28 flex-1 resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-2"
+    ></textarea>
+    <button
+      type="submit"
+      id="chat-send"
+      class="text-ink bg-brand rounded-lg px-3 py-2 text-sm font-semibold transition hover:brightness-95 disabled:opacity-50"
+      aria-label="Invia"
+    >
+      Invia
+    </button>
+  </form>
+</section>
+
+<script is:inline>
+  (function () {
+    var launcher = document.getElementById('chat-launcher');
+    var panel = document.getElementById('chat-panel');
+    var closeBtn = document.getElementById('chat-close');
+    var messagesEl = document.getElementById('chat-messages');
+    var form = document.getElementById('chat-form');
+    var input = document.getElementById('chat-input');
+    var sendBtn = document.getElementById('chat-send');
+    if (!launcher || !panel || !form || !input || !messagesEl) return;
+
+    var history = []; // {role, content} inviati all'API (solo scambi reali)
+    var greeted = false;
+    var busy = false;
+
+    function bubble(role, text) {
+      var wrap = document.createElement('div');
+      wrap.className = 'flex ' + (role === 'user' ? 'justify-end' : 'justify-start');
+      var b = document.createElement('div');
+      b.className =
+        'max-w-[80%] rounded-2xl px-3 py-2 text-sm ' +
+        (role === 'user'
+          ? 'bg-brand text-ink'
+          : 'bg-white border border-neutral-200 text-neutral-800');
+      b.textContent = text;
+      wrap.appendChild(b);
+      messagesEl.appendChild(wrap);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      return b;
+    }
+
+    function openPanel() {
+      panel.hidden = false;
+      launcher.setAttribute('aria-expanded', 'true');
+      if (!greeted) {
+        bubble(
+          'assistant',
+          'Ciao! Sono l’assistente di Simona. Chiedimi dei servizi, delle foto o di come metterti in contatto.',
+        );
+        greeted = true;
+      }
+      setTimeout(function () {
+        input.focus();
+      }, 50);
+    }
+    function closePanel() {
+      panel.hidden = true;
+      launcher.setAttribute('aria-expanded', 'false');
+      launcher.focus();
+    }
+
+    launcher.addEventListener('click', function () {
+      if (panel.hidden) openPanel();
+      else closePanel();
+    });
+    closeBtn.addEventListener('click', closePanel);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !panel.hidden) closePanel();
+    });
+
+    input.addEventListener('input', function () {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 112) + 'px';
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var text = input.value.trim();
+      if (!text || busy) return;
+      bubble('user', text);
+      history.push({ role: 'user', content: text });
+      input.value = '';
+      input.style.height = 'auto';
+
+      busy = true;
+      sendBtn.disabled = true;
+      var typing = bubble('assistant', '…');
+
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ messages: history }),
+      })
+        .then(function (r) {
+          return r.json().catch(function () {
+            return {};
+          });
+        })
+        .then(function (data) {
+          var reply = (data && data.reply) || (data && data.error) || 'Ops, riprova tra poco.';
+          typing.textContent = reply;
+          if (data && data.reply) history.push({ role: 'assistant', content: data.reply });
+        })
+        .catch(function () {
+          typing.textContent = 'Connessione non riuscita. Riprova o scrivimi dai contatti.';
+        })
+        .finally(function () {
+          busy = false;
+          sendBtn.disabled = false;
+          messagesEl.scrollTop = messagesEl.scrollHeight;
+          input.focus();
+        });
+    });
+  })();
+</script>

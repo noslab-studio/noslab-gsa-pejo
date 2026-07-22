@@ -7,6 +7,11 @@
 [build.environment]
   NODE_VERSION = "22"
 
+# Netlify Functions (assistente AI /api/chat).
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 # Deploy preview automatici sulle Pull Request (comportamento di default
 # quando il site è collegato al repo; esplicitato per chiarezza).
 [context.deploy-preview]
