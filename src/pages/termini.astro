@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { BUSINESS, SITE_NAME, SITE_URL } from '../consts';
+
+const aggiornamento = '23 luglio 2026';
+const a = BUSINESS.address;
+---
+
+<BaseLayout
+  title="Note legali"
+  description="Note legali e condizioni d'uso del sito di GSA di Grassi Simona Adele."
+>
+  <article class="mx-auto max-w-3xl px-6 py-16 sm:py-20">
+    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">Note legali</h1>
+    <p class="mt-3 text-sm text-neutral-500">Ultimo aggiornamento: {aggiornamento}</p>
+
+    <div class="mt-10 space-y-8 leading-relaxed text-neutral-700">
+      <section>
+        <h2 class="text-ink text-xl font-bold">1. Titolare del sito</h2>
+        <p class="mt-2">
+          {SITE_NAME} (impresa individuale), P.IVA {BUSINESS.vatId}, {a.street}, {a.postalCode}
+          {a.city} ({a.province}). Email: <a
+            class="decoration-brand underline decoration-2 underline-offset-4"
+            href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a
+          >.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">2. Oggetto</h2>
+        <p class="mt-2">
+          Le presenti note regolano l'uso del sito {SITE_URL}. Navigando nel sito accetti le
+          condizioni qui riportate. Il sito ha finalità informative e di presentazione dei servizi.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">3. Proprietà intellettuale</h2>
+        <p class="mt-2">
+          Testi, immagini, grafica, logo e contenuti del sito sono di proprietà di {SITE_NAME} o utilizzati
+          con licenza, e sono protetti dalla normativa sul diritto d'autore. Non è consentito copiarli,
+          riprodurli o riutilizzarli senza autorizzazione scritta. Per l'uso delle immagini vedi anche
+          la <a
+            class="decoration-brand underline decoration-2 underline-offset-4"
+            href="/liberatoria/">Liberatoria immagini</a
+          >.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">4. Uso del sito</h2>
+        <p class="mt-2">
+          L'utente si impegna a usare il sito in modo lecito e a non comprometterne il funzionamento
+          o la sicurezza. I contatti raccolti tramite modulo, newsletter o chat sono trattati
+          secondo la <a
+            class="decoration-brand underline decoration-2 underline-offset-4"
+            href="/privacy/">Privacy Policy</a
+          >.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">5. Limitazione di responsabilità</h2>
+        <p class="mt-2">
+          I contenuti sono forniti a scopo informativo e possono essere aggiornati o modificati in
+          qualsiasi momento. Pur curandone l'accuratezza, {SITE_NAME} non garantisce che il sito sia sempre
+          privo di errori o interruzioni, nei limiti consentiti dalla legge.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">6. Collegamenti a siti terzi</h2>
+        <p class="mt-2">
+          Il sito contiene link a servizi esterni (ad esempio WhatsApp, Google, OpenStreetMap).
+          {SITE_NAME} non è responsabile dei contenuti o delle policy di tali siti, che restano dei rispettivi
+          titolari.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">7. Legge applicabile</h2>
+        <p class="mt-2">
+          Le presenti note sono regolate dalla legge italiana. Per le controversie è competente il
+          foro del luogo di residenza del consumatore, ove applicabile.
+        </p>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
