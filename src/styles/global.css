@@ -66,6 +66,21 @@ body {
     background-size: 100% 100%;
     transition: background-size 0.8s ease 0.15s;
   }
+
+  /* Logo NosLab: pulsazione delicata per attirare l'attenzione (proporzioni invariate). */
+  .nslb-pulse {
+    transform-origin: center;
+    animation: nslb-pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes nslb-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.12);
+    }
+  }
 }
 
 /* Header: ombra morbida quando si scrolla. */
