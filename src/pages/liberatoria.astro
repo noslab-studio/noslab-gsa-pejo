@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { BUSINESS, SITE_NAME } from '../consts';
+
+const aggiornamento = '23 luglio 2026';
+---
+
+<BaseLayout
+  title="Liberatoria immagini"
+  description="Informativa e liberatoria sull'utilizzo delle immagini per i servizi fotografici di GSA di Grassi Simona Adele."
+>
+  <article class="mx-auto max-w-3xl px-6 py-16 sm:py-20">
+    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
+      Liberatoria e utilizzo delle immagini
+    </h1>
+    <p class="mt-3 text-sm text-neutral-500">Ultimo aggiornamento: {aggiornamento}</p>
+
+    <div class="mt-10 space-y-8 leading-relaxed text-neutral-700">
+      <p>
+        Questa pagina spiega come {SITE_NAME} tratta e utilizza le immagini, sia quelle pubblicate su
+        questo sito sia quelle realizzate nell'ambito dei servizi fotografici, nel rispetto del Codice
+        Civile (art. 10), della Legge sul diritto d'autore (L. 633/1941, artt. 96-97) e del Regolamento
+        (UE) 2016/679 (GDPR).
+      </p>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">1. Immagini pubblicate sul sito</h2>
+        <p class="mt-2">
+          Le fotografie presenti su questo sito sono di proprietà di {SITE_NAME} o sono utilizzate con
+          il consenso degli aventi diritto. Le persone eventualmente ritratte hanno prestato il proprio
+          consenso alla pubblicazione. La riproduzione, la copia o l'uso delle immagini senza autorizzazione
+          scritta non sono consentiti.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">2. Servizi fotografici e consenso del soggetto</h2>
+        <p class="mt-2">
+          Per ogni servizio fotografico, l'eventuale utilizzo delle immagini che ritraggono il
+          cliente o altri soggetti (ad esempio pubblicazione sul sito, sui social o su materiale
+          promozionale) avviene <strong>solo previo consenso scritto</strong> della persona interessata,
+          tramite apposita liberatoria. Il modello di liberatoria è disponibile su richiesta prima del
+          servizio.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">3. Minori</h2>
+        <p class="mt-2">
+          Le immagini che ritraggono minori vengono utilizzate esclusivamente con il consenso di
+          entrambi i genitori o di chi esercita la responsabilità genitoriale.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">4. Finalità e conservazione</h2>
+        <p class="mt-2">
+          Le immagini realizzate vengono consegnate al cliente e utilizzate a fini promozionali solo
+          nei limiti del consenso prestato. Le foto sono conservate per il tempo necessario alla
+          consegna e agli eventuali obblighi di legge, e comunque non oltre quanto indicato nella
+          liberatoria o nella <a
+            class="decoration-brand underline decoration-2 underline-offset-4"
+            href="/privacy/">Privacy Policy</a
+          >.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">5. Revoca del consenso e rimozione</h2>
+        <p class="mt-2">
+          Chi è ritratto in un'immagine può, in qualsiasi momento, revocare il consenso e chiedere
+          la rimozione o la limitazione dell'uso della propria immagine scrivendo a
+          <a
+            class="decoration-brand underline decoration-2 underline-offset-4"
+            href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a
+          >. Provvederemo nel più breve tempo possibile, fatti salvi gli usi già effettuati prima
+          della revoca.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">6. Titolare</h2>
+        <p class="mt-2">
+          {SITE_NAME} (impresa individuale), P.IVA {BUSINESS.vatId},
+          {BUSINESS.address.street}, {BUSINESS.address.postalCode}
+          {BUSINESS.address.city} ({BUSINESS.address.province}).
+        </p>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
