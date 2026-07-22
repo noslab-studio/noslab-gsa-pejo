@@ -1,0 +1,28 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import { SITE_LANG } from '../consts';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+  noindex?: boolean;
+}
+
+const { title, description, image, canonical, noindex } = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE_LANG}>
+  <head>
+    <BaseHead {title} {description} {image} {canonical} {noindex}>
+      {/* Le pagine passano qui il loro JSON-LD tramite lo slot "jsonld". */}
+      <slot name="jsonld" />
+    </BaseHead>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

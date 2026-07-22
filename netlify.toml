@@ -1,0 +1,16 @@
+# Configurazione build Netlify per noslab-gsa-pejo (sito statico Astro).
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Deploy preview automatici sulle Pull Request (comportamento di default
+# quando il site è collegato al repo; esplicitato per chiarezza).
+[context.deploy-preview]
+  command = "npm run build"
+
+[context.branch-deploy]
+  command = "npm run build"

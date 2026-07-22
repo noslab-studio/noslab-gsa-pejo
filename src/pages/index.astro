@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_URL } from '../consts';
+
+// Structured data: predisposto per SportsClub (estende Organization).
+// I valori sono placeholder da completare con i dati reali del GSA Peio.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsClub',
+  name: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  url: SITE_URL,
+  sport: 'Skiing',
+  areaServed: 'Val di Pejo, Trentino',
+};
+---
+
+<BaseLayout description={SITE_DESCRIPTION}>
+  <script type="application/ld+json" slot="jsonld" set:html={JSON.stringify(jsonLd)} />
+
+  <main class="mx-auto max-w-3xl px-6 py-24">
+    <h1 class="text-4xl font-bold tracking-tight">GSA Peio</h1>
+    <p class="mt-4 text-lg text-gray-600">
+      Nuovo sito in costruzione — scaffolding Astro completato.
+    </p>
+  </main>
+</BaseLayout>

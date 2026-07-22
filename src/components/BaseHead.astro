@@ -1,0 +1,68 @@
+---
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_LOCALE, DEFAULT_OG_IMAGE } from '../consts';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Percorso o URL assoluto dell'immagine OG. Default: DEFAULT_OG_IMAGE. */
+  image?: string;
+  /** Sovrascrive il canonical calcolato da Astro.url. */
+  canonical?: string;
+  /** Indica ai crawler di non indicizzare (es. anteprime/deploy preview). */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = SITE_DESCRIPTION,
+  image = DEFAULT_OG_IMAGE,
+  canonical,
+  noindex = false,
+} = Astro.props;
+
+// title della pagina; se manca, usa solo il titolo del sito.
+const pageTitle = title ? `${title} — ${SITE_TITLE}` : SITE_TITLE;
+
+// Astro.site è definito in astro.config.mjs → URL assoluti affidabili.
+const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
+const socialImage = new URL(image, Astro.site).href;
+---
+
+{/* Meta di base */}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+
+{/* SEO */}
+<title>{pageTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+{/* Favicon */}
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+
+{/* Open Graph */}
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:locale" content={SITE_LOCALE} />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:image" content={socialImage} />
+
+{/* Twitter card */}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImage} />
+
+{
+  /*
+  Slot per lo structured data (JSON-LD).
+  Il layout inietta qui uno <script type="application/ld+json"> con
+  SportsClub / Organization / Event a seconda della pagina.
+*/
+}
+<slot />
