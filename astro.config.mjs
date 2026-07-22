@@ -6,9 +6,9 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  // URL di produzione: usato per canonical, Open Graph e sitemap.
-  // Tenere allineato con SITE_URL in src/consts.ts.
-  site: 'https://gsa-pejo.com',
+  // Host pubblicato: usato per canonical, Open Graph, sitemap. Allineato a SITE_URL.
+  // Temporaneo (dominio ancora su Canva): ripristinare 'https://gsa-pejo.com' al collegamento.
+  site: 'https://noslab-gsa-pejo.netlify.app',
 
   vite: {
     plugins: [tailwindcss()],

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://gsa-pejo.com/sitemap-index.xml
+Sitemap: https://noslab-gsa-pejo.netlify.app/sitemap-index.xml
