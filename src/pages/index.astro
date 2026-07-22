@@ -1,27 +1,88 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE_TITLE, SITE_DESCRIPTION, SITE_URL } from '../consts';
+import { SITE_DESCRIPTION, BUSINESS } from '../consts';
 
-// Structured data: predisposto per SportsClub (estende Organization).
-// I valori sono placeholder da completare con i dati reali del GSA Peio.
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'SportsClub',
-  name: SITE_TITLE,
-  description: SITE_DESCRIPTION,
-  url: SITE_URL,
-  sport: 'Skiing',
-  areaServed: 'Val di Pejo, Trentino',
-};
+const services = (await getCollection('services')).sort((a, b) => a.data.ordine - b.data.ordine);
 ---
 
 <BaseLayout description={SITE_DESCRIPTION}>
-  <script type="application/ld+json" slot="jsonld" set:html={JSON.stringify(jsonLd)} />
-
-  <main class="mx-auto max-w-3xl px-6 py-24">
-    <h1 class="text-4xl font-bold tracking-tight">GSA Peio</h1>
-    <p class="mt-4 text-lg text-gray-600">
-      Nuovo sito in costruzione — scaffolding Astro completato.
+  {/* Hero */}
+  <section class="mx-auto max-w-5xl px-6 pt-20 pb-16 sm:pt-28">
+    <p class="text-sm font-medium tracking-widest text-amber-400 uppercase">
+      Ti do il benvenuto in GSA
     </p>
-  </main>
+    <h1 class="mt-4 text-4xl font-bold tracking-tight sm:text-6xl">Grassi Simona Adele</h1>
+    <p class="mt-4 max-w-2xl text-xl text-neutral-300 sm:text-2xl">
+      Consulente digitale e fotografia. Risolvo problemi — con efficienza, chiarezza e pazienza.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-4">
+      <a
+        href="/contatti/"
+        class="rounded-full bg-amber-400 px-6 py-3 font-medium text-neutral-950 transition hover:bg-amber-300"
+      >
+        Chiamami
+      </a>
+      <a
+        href="/servizi/"
+        class="rounded-full border border-white/20 px-6 py-3 font-medium text-neutral-100 transition hover:bg-white/10"
+      >
+        Scopri i servizi
+      </a>
+    </div>
+  </section>
+
+  {/* Intro */}
+  <section class="mx-auto max-w-3xl px-6 py-12">
+    <p class="text-lg leading-relaxed text-neutral-300">
+      GSA di Grassi Simona Adele è un'attività polivalente con base a
+      <strong class="text-neutral-100"> Peio</strong>, nel cuore della Val di Pejo. Mi occupo
+      principalmente di consulenza per la pubblicità digitale, social e promozione, di servizi
+      fotografici e della gestione dell'ufficio — per aziende e privati del Trentino, del Bresciano
+      e del Bergamasco.
+    </p>
+  </section>
+
+  {/* Servizi in evidenza */}
+  <section class="mx-auto max-w-5xl px-6 py-12">
+    <div class="flex items-baseline justify-between">
+      <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Servizi offerti</h2>
+      <a href="/servizi/" class="text-sm text-amber-400 hover:underline">Tutti i servizi →</a>
+    </div>
+    <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        services.map((s) => (
+          <li class="rounded-xl border border-white/10 bg-white/5 p-6">
+            <h3 class="font-semibold text-amber-400">{s.data.titolo}</h3>
+            <p class="mt-2 text-sm text-neutral-300">{s.data.descrizione}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  {/* CTA finale */}
+  <section class="mx-auto max-w-5xl px-6 py-12">
+    <div class="rounded-2xl border border-amber-400/30 bg-amber-400/5 p-8 text-center sm:p-12">
+      <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Parliamo del tuo progetto</h2>
+      <p class="mx-auto mt-3 max-w-xl text-neutral-300">
+        Un sito, una campagna social, un servizio fotografico o la gestione della fatturazione?
+        Scrivimi o chiamami, troviamo insieme la soluzione.
+      </p>
+      <div class="mt-6 flex flex-wrap justify-center gap-4">
+        <a
+          href={`tel:${BUSINESS.phoneE164}`}
+          class="rounded-full bg-amber-400 px-6 py-3 font-medium text-neutral-950 transition hover:bg-amber-300"
+        >
+          {BUSINESS.phone}
+        </a>
+        <a
+          href={`mailto:${BUSINESS.email}`}
+          class="rounded-full border border-white/20 px-6 py-3 font-medium transition hover:bg-white/10"
+        >
+          {BUSINESS.email}
+        </a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

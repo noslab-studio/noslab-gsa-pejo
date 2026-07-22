@@ -1,0 +1,37 @@
+---
+import { SITE_NAME, BUSINESS } from '../consts';
+const year = new Date().getFullYear();
+const a = BUSINESS.address;
+---
+
+<footer class="mt-24 border-t border-white/10">
+  <div class="mx-auto grid max-w-5xl gap-8 px-6 py-12 sm:grid-cols-3">
+    <div>
+      <p class="font-semibold text-amber-400">{SITE_NAME}</p>
+      <p class="mt-2 text-sm text-neutral-400">Consulenza digitale, social e fotografia</p>
+    </div>
+
+    <address class="text-sm text-neutral-400 not-italic">
+      <p class="font-medium text-neutral-200">Contatti</p>
+      <p class="mt-2">{a.street}<br />{a.postalCode} {a.city} ({a.province})</p>
+      <p class="mt-2">
+        <a class="hover:text-white" href={`tel:${BUSINESS.phoneE164}`}>{BUSINESS.phone}</a>
+      </p>
+      <p>
+        <a class="hover:text-white" href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a>
+      </p>
+    </address>
+
+    <div class="text-sm text-neutral-400">
+      <p class="font-medium text-neutral-200">Impresa</p>
+      <p class="mt-2">Impresa individuale<br />P.IVA {BUSINESS.vatId}</p>
+    </div>
+  </div>
+
+  <div class="border-t border-white/10">
+    <p class="mx-auto max-w-5xl px-6 py-4 text-xs text-neutral-500">
+      © {year}
+      {SITE_NAME}. Tutti i diritti riservati.
+    </p>
+  </div>
+</footer>

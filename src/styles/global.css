@@ -1,1 +1,14 @@
 @import 'tailwindcss';
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: #fbbf24; /* amber-400 */
+  color: #0a0a0a;
+}

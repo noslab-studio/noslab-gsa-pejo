@@ -1,5 +1,8 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SchemaOrg from '../components/SchemaOrg.astro';
 import { SITE_LANG } from '../consts';
 import '../styles/global.css';
 
@@ -18,11 +21,25 @@ const { title, description, image, canonical, noindex } = Astro.props;
 <html lang={SITE_LANG}>
   <head>
     <BaseHead {title} {description} {image} {canonical} {noindex}>
-      {/* Le pagine passano qui il loro JSON-LD tramite lo slot "jsonld". */}
+      <SchemaOrg />
+      {/* JSON-LD specifico della pagina (opzionale). */}
       <slot name="jsonld" />
     </BaseHead>
   </head>
-  <body>
-    <slot />
+  <body class="min-h-screen bg-neutral-950 text-neutral-100 antialiased">
+    <a
+      href="#contenuto"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded focus:bg-amber-400 focus:px-4 focus:py-2 focus:text-neutral-950"
+    >
+      Vai al contenuto
+    </a>
+
+    <Header />
+
+    <main id="contenuto">
+      <slot />
+    </main>
+
+    <Footer />
   </body>
 </html>

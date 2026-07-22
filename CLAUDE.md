@@ -1,14 +1,21 @@
 # noslab-gsa-pejo
 
-Redesign del sito del **GSA Peio** (Gruppo Sportivo Amatori, sci club in Val di Pejo),
+Redesign del sito di **GSA di Grassi Simona Adele** — consulente digitale e fotografa,
 attualmente su https://gsa-pejo.com/.
+
+> ⚠️ "GSA" = iniziali di **Grassi Simona Adele**; "Pejo" è il paese (Val di Pejo, TN)
+> dove ha sede l'impresa individuale. **Non è uno sci club** (il "Gruppo Sportivo Amatori"
+> del brief iniziale era un equivoco: il sito è la vetrina professionale di Simona).
 
 ## Obiettivo
 
-- Ricostruire il sito del GSA Peio mantenendo **identità e contenuti** attuali, ma con
-  qualità, velocità ed efficacia molto superiori.
-- **Doppia funzione**: il sito è anche **vetrina/portfolio di Simona** (commerciale NosLab)
-  verso i suoi clienti. La qualità deve essere impeccabile.
+- Ricostruire il sito professionale di Simona mantenendo **identità e contenuti** attuali,
+  ma con qualità, velocità ed efficacia (SEO) molto superiori.
+- **Vetrina dei servizi** (consulenza digitale, social, pubblicità digitale e tradizionale,
+  fotografia, gestione ufficio/fatturazione) e portfolio, radicata nel contesto
+  **Pejo/montagna** — sua cifra estetica e bacino locale (TN/BS/BG).
+- Simona è **commerciale NosLab**: il sito è anche il suo biglietto da visita verso i clienti.
+  La qualità deve essere impeccabile.
 
 ## Problema del sito attuale → soluzione
 
@@ -38,7 +45,7 @@ attualmente su https://gsa-pejo.com/.
 - **Lighthouse ≥ 95** in tutte le categorie (Performance, Accessibility, Best Practices, SEO),
   sia **mobile** che **desktop**.
 - **Accessibilità WCAG 2.1 AA**.
-- **Structured data valido** (JSON-LD: SportsClub/Organization + Event).
+- **Structured data valido** (JSON-LD: ProfessionalService/LocalBusiness + Person).
 - **0 errori in console**.
 - SEO corretta (canonical, Open Graph/Twitter, sitemap) e **GDPR pulito**.
 

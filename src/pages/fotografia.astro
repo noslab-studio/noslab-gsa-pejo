@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const categorie = [
+  {
+    titolo: 'Aziendale e commerciale',
+    testo:
+      'Foto per la comunicazione della tua attività: prodotti, ambienti, ritratti professionali.',
+  },
+  {
+    titolo: 'Piccoli eventi',
+    testo: 'Reportage di eventi e ricorrenze, in formato digitale e pronto per la stampa.',
+  },
+  { titolo: 'Calendari', testo: 'Progetti fotografici stagionali e calendari personalizzati.' },
+  {
+    titolo: 'Famiglia e gravidanza',
+    testo: 'Gli scatti più teneri: le mamme in attesa e i momenti di famiglia.',
+  },
+  {
+    titolo: 'Paesaggi della Val di Pejo',
+    testo: 'Montagna, natura e vita di montagna — la mia terra d’adozione.',
+  },
+];
+---
+
+<BaseLayout
+  title="Fotografia"
+  description="Servizi fotografici a Peio: aziendale e commerciale, eventi, calendari, famiglia e gravidanza, paesaggi della Val di Pejo."
+>
+  <div class="mx-auto max-w-5xl px-6 py-20">
+    <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Fotografia</h1>
+    <p class="mt-4 max-w-2xl text-lg text-neutral-300">
+      Servizi fotografici a fini pubblicitari e commerciali, ma anche i momenti più personali. Tutto
+      in formato digitale.
+    </p>
+
+    <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        categorie.map((c) => (
+          <li class="rounded-xl border border-white/10 bg-white/5 p-6">
+            <h2 class="font-semibold text-amber-400">{c.titolo}</h2>
+            <p class="mt-2 text-sm text-neutral-300">{c.testo}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-12 rounded-lg border border-white/10 bg-white/5 p-4 text-sm text-neutral-400">
+      La galleria fotografica sarà pubblicata a breve. Nel frattempo, per vedere i lavori scrivimi:
+      sarò felice di mostrarti il portfolio completo.
+    </p>
+  </div>
+</BaseLayout>

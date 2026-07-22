@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { BUSINESS } from '../consts';
+
+const a = BUSINESS.address;
+const mapsQuery = encodeURIComponent(`${a.street}, ${a.postalCode} ${a.city} ${a.province}`);
+---
+
+<BaseLayout
+  title="Contatti"
+  description="Contatta GSA di Grassi Simona Adele: Via San Giorgio 15, 38024 Peio (TN). Telefono, email e indirizzo."
+>
+  <div class="mx-auto max-w-3xl px-6 py-20">
+    <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Contatti</h1>
+    <p class="mt-4 text-lg text-neutral-300">
+      Scrivimi o chiamami: rispondo volentieri e troviamo insieme la soluzione più adatta.
+    </p>
+
+    <dl class="mt-12 grid gap-8 sm:grid-cols-2">
+      <div>
+        <dt class="text-sm font-medium tracking-widest text-amber-400 uppercase">Telefono</dt>
+        <dd class="mt-2 text-lg">
+          <a class="hover:underline" href={`tel:${BUSINESS.phoneE164}`}>{BUSINESS.phone}</a>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium tracking-widest text-amber-400 uppercase">Email</dt>
+        <dd class="mt-2 text-lg">
+          <a class="hover:underline" href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium tracking-widest text-amber-400 uppercase">Indirizzo</dt>
+        <dd class="mt-2 text-lg">
+          <address class="not-italic">
+            {a.street}<br />{a.postalCode}
+            {a.city} ({a.province})
+          </address>
+          <a
+            class="mt-2 inline-block text-sm text-amber-400 hover:underline"
+            href={`https://www.openstreetmap.org/search?query=${mapsQuery}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Apri nella mappa →
+          </a>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium tracking-widest text-amber-400 uppercase">Impresa</dt>
+        <dd class="mt-2 text-lg">
+          Impresa individuale<br />
+          <span class="text-neutral-300">P.IVA {BUSINESS.vatId}</span>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</BaseLayout>
