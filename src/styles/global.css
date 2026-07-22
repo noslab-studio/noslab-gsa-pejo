@@ -68,6 +68,16 @@ body {
   }
 }
 
+/* Header: ombra morbida quando si scrolla. */
+#site-header {
+  transition:
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+#site-header.is-scrolled {
+  box-shadow: 0 10px 30px -18px rgba(22, 22, 15, 0.35);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

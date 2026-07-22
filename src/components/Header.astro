@@ -10,21 +10,37 @@ const isActive = (href: string) => {
   return h === current;
 };
 
+// Voce di nav con sottolineatura animata giallo → lime (hover e pagina attiva).
 const linkBase =
-  'aria-[current=page]:font-semibold aria-[current=page]:underline aria-[current=page]:decoration-brand aria-[current=page]:decoration-[3px] aria-[current=page]:underline-offset-8';
+  'relative py-1 font-medium text-neutral-700 transition-colors hover:text-ink ' +
+  'after:pointer-events-none after:absolute after:-bottom-0.5 after:left-0 after:h-[3px] after:w-full ' +
+  'after:origin-left after:scale-x-0 after:rounded-full after:bg-gradient-to-r after:from-brand after:to-brand-lime ' +
+  'motion-safe:after:transition-transform motion-safe:after:duration-300 hover:after:scale-x-100 ' +
+  'aria-[current=page]:font-semibold aria-[current=page]:text-ink aria-[current=page]:after:scale-x-100';
 ---
 
-<header class="sticky top-0 z-30 border-b border-neutral-200 bg-white/90 backdrop-blur">
+<header
+  id="site-header"
+  class="sticky top-0 z-30 border-b border-neutral-200 bg-white/80 backdrop-blur"
+>
   <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
-    <a href="/" class="flex items-center gap-2" aria-label="GSA di Grassi Simona Adele, home">
-      <Image src={logo} alt="" width={40} height={40} class="h-10 w-10" />
-      <span class="text-ink text-base font-bold tracking-tight">GSA</span>
+    <a
+      href="/"
+      class="group flex items-center gap-2.5"
+      aria-label="GSA di Grassi Simona Adele, home"
+    >
+      <span
+        class="bg-ink flex h-10 w-10 items-center justify-center rounded-xl motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out motion-safe:group-hover:rotate-[360deg]"
+      >
+        <Image src={logo} alt="" width={30} height={30} class="h-7 w-7" />
+      </span>
+      <span class="text-ink text-base font-extrabold tracking-tight">GSA</span>
     </a>
 
     {/* Menu mobile: disclosure accessibile senza JavaScript */}
     <details class="group relative sm:hidden">
       <summary
-        class="focus-visible:outline-brand flex cursor-pointer list-none items-center gap-2 rounded px-3 py-2 text-sm font-medium focus-visible:outline-2"
+        class="focus-visible:outline-brand flex cursor-pointer list-none items-center gap-2 rounded px-3 py-2 text-sm font-semibold focus-visible:outline-2"
         aria-label="Apri il menu"
       >
         Menu
@@ -40,7 +56,7 @@ const linkBase =
                 <a
                   href={item.href}
                   aria-current={isActive(item.href) ? 'page' : undefined}
-                  class={`block rounded px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100 ${linkBase}`}
+                  class="aria-[current=page]:bg-brand/15 aria-[current=page]:text-ink block rounded px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 aria-[current=page]:font-semibold"
                 >
                   {item.label}
                 </a>
@@ -53,14 +69,14 @@ const linkBase =
 
     {/* Navigazione desktop */}
     <nav aria-label="Navigazione principale" class="hidden sm:block">
-      <ul class="flex items-center gap-7 text-sm">
+      <ul class="flex items-center gap-8 text-sm">
         {
           NAV.map((item) => (
             <li>
               <a
                 href={item.href}
                 aria-current={isActive(item.href) ? 'page' : undefined}
-                class={`hover:text-ink text-neutral-700 transition-colors ${linkBase}`}
+                class={linkBase}
               >
                 {item.label}
               </a>
@@ -70,4 +86,16 @@ const linkBase =
       </ul>
     </nav>
   </div>
+
+  <script is:inline>
+    (function () {
+      var header = document.getElementById('site-header');
+      if (!header) return;
+      var onScroll = function () {
+        header.classList.toggle('is-scrolled', window.scrollY > 8);
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+  </script>
 </header>

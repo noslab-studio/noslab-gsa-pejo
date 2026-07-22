@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import { SITE_NAME, BUSINESS, NAV } from '../consts';
 import logo from '../assets/logo-gsa.png';
+import NosLabSign from './NosLabSign.astro';
 
 const year = new Date().getFullYear();
 const a = BUSINESS.address;
@@ -86,7 +87,7 @@ const a = BUSINESS.address;
       class="mt-10 flex flex-col gap-2 border-t border-white/10 pt-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between"
     >
       <p>© {year} {SITE_NAME} · Impresa individuale · P.IVA {BUSINESS.vatId}</p>
-      <p>Val di Pejo, Trentino</p>
+      <NosLabSign />
     </div>
   </div>
 </footer>
