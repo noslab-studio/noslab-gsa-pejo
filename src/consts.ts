@@ -4,8 +4,12 @@
  * dallo structured data). Modifica qui i valori canonici.
  */
 
-/** URL di produzione (canonical). Deve combaciare con `site` in astro.config.mjs. */
-export const SITE_URL = 'https://gsa-pejo.com';
+/**
+ * Host attualmente pubblicato (deve combaciare con `site` in astro.config.mjs).
+ * Il dominio gsa-pejo.com è ancora su Canva: finché non è collegato, canonical, Open Graph
+ * e sitemap usano il site Netlify. Al collegamento del dominio ripristinare 'https://gsa-pejo.com'.
+ */
+export const SITE_URL = 'https://noslab-gsa-pejo.netlify.app';
 
 export const SITE_NAME = 'GSA di Grassi Simona Adele';
 export const SITE_TAGLINE = 'Consulente digitale e fotografia';
