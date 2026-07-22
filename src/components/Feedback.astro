@@ -1,15 +1,22 @@
 ---
 /**
- * Sezione testimonianze. Dati reali dalle recensioni Google (5,0 su 3 recensioni).
- * Per aggiungere testimonianze, inserirle in `testimonianze` (testo + autore).
+ * Sezione testimonianze.
+ * Recensioni reali da Google. Se è impostata la variabile GOOGLE_PLACES_API_KEY
+ * (su Netlify), le recensioni vengono lette dalla Google Places API a ogni build,
+ * così restano aggiornate; altrimenti si usano quelle salvate qui sotto.
  * Non inserire recensioni non autentiche.
  */
-const GOOGLE_RATING = '5,0';
-const GOOGLE_COUNT = 3;
-// Scheda Google dell'attività (CID reale): recensioni + "Scrivi una recensione".
-const GOOGLE_URL = 'https://www.google.com/maps?cid=5282185592699157041';
+const PLACE_ID = process.env.GOOGLE_PLACE_ID || 'ChIJXY0xltn5gkcRMfqEcs8XTkk';
+const PLACES_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
-const testimonianze = [
+// Scheda Google (per leggere le recensioni) e modulo "scrivi una recensione".
+const GOOGLE_URL = 'https://www.google.com/maps?cid=5282185592699157041';
+const WRITE_URL = `https://search.google.com/local/writereview?placeid=${PLACE_ID}`;
+
+// Fallback: recensioni reali correnti (usate se la Places API non è configurata).
+let ratingRaw = 5;
+let count = 3;
+let testimonianze = [
   {
     testo:
       'Simona è una bomba di energia allo stato puro. Grazie a lei sono riuscita a migliorare l’organico delle mie pagine social. Super disponibile anche come orari e giornate! La ricontatterò a breve per un’altra campagna pubblicitaria!',
@@ -24,6 +31,33 @@ const testimonianze = [
   },
 ];
 
+// Aggiornamento automatico (a build-time) dalle recensioni Google, se configurata la chiave.
+if (PLACES_KEY) {
+  try {
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${PLACE_ID}&fields=rating,user_ratings_total,reviews&language=it&reviews_sort=newest&key=${PLACES_KEY}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.status === 'OK' && data.result) {
+      if (typeof data.result.rating === 'number') ratingRaw = data.result.rating;
+      if (typeof data.result.user_ratings_total === 'number')
+        count = data.result.user_ratings_total;
+      const revs = (data.result.reviews || [])
+        .filter((r: any) => r.text && String(r.text).trim())
+        .slice(0, 4)
+        .map((r: any) => ({
+          testo: String(r.text).trim(),
+          autore: r.author_name,
+          fonte: 'Google',
+        }));
+      if (revs.length) testimonianze = revs;
+    }
+  } catch {
+    /* in caso di errore restano le recensioni salvate sopra */
+  }
+}
+
+const GOOGLE_RATING = ratingRaw.toFixed(1).replace('.', ',');
+const GOOGLE_COUNT = count;
 const Stelle = (size: string) => Array.from({ length: 5 }).map(() => size);
 ---
 
@@ -61,7 +95,7 @@ const Stelle = (size: string) => Array.from({ length: 5 }).map(() => size);
     </div>
   </div>
 
-  {/* Testimonianze reali */}
+  {/* Testimonianze */}
   <ul class="mt-8 grid gap-4 sm:grid-cols-2">
     {
       testimonianze.map((t) => (
@@ -83,12 +117,13 @@ const Stelle = (size: string) => Array.from({ length: 5 }).map(() => size);
     }
   </ul>
 
-  {/* Lascia una recensione */}
+  {/* Lascia una recensione: apre il modulo Google in un popup */}
   <div class="mt-8">
     <a
-      href={GOOGLE_URL}
+      href={WRITE_URL}
       target="_blank"
       rel="noopener noreferrer"
+      data-review-popup
       class="text-ink bg-brand inline-flex items-center gap-2 rounded-full px-6 py-3 font-semibold transition hover:brightness-95"
     >
       <svg viewBox="0 0 20 20" fill="currentColor" class="h-5 w-5" aria-hidden="true">
@@ -99,4 +134,22 @@ const Stelle = (size: string) => Array.from({ length: 5 }).map(() => size);
       Lascia una recensione
     </a>
   </div>
+
+  <script is:inline>
+    document.querySelectorAll('[data-review-popup]').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        var w = 520,
+          h = 700;
+        var left = Math.max(0, (screen.width - w) / 2);
+        var top = Math.max(0, (screen.height - h) / 2);
+        var win = window.open(
+          el.href,
+          'gsa-recensione',
+          'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top + ',noopener,noreferrer',
+        );
+        // Se il popup è bloccato, lascia proseguire il link normale (nuova scheda).
+        if (win) e.preventDefault();
+      });
+    });
+  </script>
 </section>
