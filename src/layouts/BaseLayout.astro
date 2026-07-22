@@ -2,6 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Newsletter from '../components/Newsletter.astro';
 import ChatBot from '../components/ChatBot.astro';
 import SchemaOrg from '../components/SchemaOrg.astro';
 import { SITE_LANG } from '../consts';
@@ -65,6 +66,7 @@ const { title, description, image, canonical, noindex } = Astro.props;
       <slot />
     </main>
 
+    <Newsletter />
     <Footer />
     <ChatBot />
 
