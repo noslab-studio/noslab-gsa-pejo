@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { BUSINESS } from '../consts';
+
+const aggiornamento = '22 luglio 2026';
+---
+
+<BaseLayout
+  title="Cookie Policy"
+  description="Informativa sui cookie di questo sito: nessun cookie di profilazione né strumenti di tracciamento di terze parti."
+>
+  <article class="mx-auto max-w-3xl px-6 py-16 sm:py-20">
+    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">Cookie Policy</h1>
+    <p class="mt-3 text-sm text-neutral-500">Ultimo aggiornamento: {aggiornamento}</p>
+
+    <div class="mt-10 space-y-8 leading-relaxed text-neutral-700">
+      <section>
+        <h2 class="text-ink text-xl font-bold">Cosa sono i cookie</h2>
+        <p class="mt-2">
+          I cookie sono piccoli file di testo che i siti salvano sul dispositivo dell'utente.
+          Possono essere <strong>tecnici</strong> (necessari al funzionamento) oppure di
+          <strong>profilazione</strong> (per tracciare le abitudini di navigazione).
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">Cosa usa questo sito</h2>
+        <p class="mt-2">
+          Questo è un sito statico che <strong>non utilizza cookie di profilazione</strong> né strumenti
+          di analisi o tracciamento di terze parti (nessun Google Analytics, nessun pixel di social network,
+          nessuna pubblicità). Per questo motivo non è presente un banner di consenso: non ci sono cookie
+          che lo richiedano.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">Cookie tecnici</h2>
+        <p class="mt-2">
+          Il fornitore di hosting (Netlify) può utilizzare cookie o tecnologie tecniche strettamente
+          necessarie a erogare il sito in modo sicuro ed efficiente. Questi non servono a profilare
+          l'utente e, ai sensi della normativa, non richiedono consenso.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">Collegamenti a servizi di terze parti</h2>
+        <p class="mt-2">
+          Il sito contiene link verso servizi esterni (ad esempio WhatsApp per i contatti e una
+          mappa di OpenStreetMap). Cliccandoli si viene indirizzati a siti di terze parti che
+          applicano le proprie informative e i propri cookie. Non sono presenti contenuti
+          incorporati di terze parti che traccino la navigazione all'interno di questo sito.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">Come gestire i cookie</h2>
+        <p class="mt-2">
+          Puoi comunque controllare o eliminare i cookie dalle impostazioni del tuo browser (Chrome,
+          Firefox, Safari, Edge). La disattivazione dei cookie tecnici potrebbe influire sul
+          corretto funzionamento di alcune pagine.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-ink text-xl font-bold">Trattamento dei dati e contatti</h2>
+        <p class="mt-2">
+          Per il trattamento dei dati personali (compreso il modulo di contatto) consulta la
+          <a class="decoration-brand underline decoration-2 underline-offset-4" href="/privacy/"
+            >Privacy Policy</a
+          >. Per qualsiasi domanda scrivi a
+          <a
+            class="decoration-brand underline decoration-2 underline-offset-4"
+            href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a
+          >.
+        </p>
+      </section>
+    </div>
+  </article>
+</BaseLayout>

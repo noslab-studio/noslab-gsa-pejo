@@ -1,0 +1,62 @@
+---
+// Iscrizione newsletter tramite Netlify Forms (nessun servizio esterno).
+---
+
+<section class="mx-auto max-w-5xl px-6 py-12">
+  <div class="border-brand/40 bg-brand/10 rounded-3xl border p-8 sm:p-10">
+    <div class="grid items-center gap-6 lg:grid-cols-2">
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">
+          Iscriviti alla <span class="evidenzia">newsletter</span>
+        </h2>
+        <p class="mt-2 text-neutral-700">
+          Consigli su digitale, social e fotografia, più le novità di GSA. Niente spam, promesso.
+        </p>
+      </div>
+
+      <form
+        name="newsletter"
+        method="POST"
+        action="/grazie/"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        class="space-y-3"
+      >
+        <input type="hidden" name="form-name" value="newsletter" />
+        <p class="hidden">
+          <label>Non compilare: <input name="bot-field" /></label>
+        </p>
+
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <label for="newsletter-email" class="sr-only">La tua email</label>
+          <input
+            id="newsletter-email"
+            name="email"
+            type="email"
+            required
+            autocomplete="email"
+            placeholder="La tua email"
+            class="focus:border-ink focus:outline-brand text-ink w-full flex-1 rounded-full border border-neutral-300 bg-white px-5 py-3 shadow-sm focus:outline-2"
+          />
+          <button
+            type="submit"
+            class="text-ink bg-brand rounded-full px-6 py-3 font-semibold whitespace-nowrap transition hover:brightness-95"
+          >
+            Iscrivimi
+          </button>
+        </div>
+
+        <label class="flex items-start gap-2 text-xs text-neutral-600">
+          <input type="checkbox" name="privacy" required class="accent-brand mt-0.5 h-4 w-4" />
+          <span>
+            Acconsento a ricevere la newsletter e al trattamento dei dati secondo la
+            <a
+              class="decoration-brand font-medium underline decoration-2 underline-offset-2"
+              href="/privacy/">Privacy Policy</a
+            >.
+          </span>
+        </label>
+      </form>
+    </div>
+  </div>
+</section>

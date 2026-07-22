@@ -1,0 +1,240 @@
+---
+// Assistente AI di GSA. Launcher flottante + pannello. Parla con /api/chat.
+import { BUSINESS } from '../consts';
+
+const waMessage = encodeURIComponent(
+  'Ciao Simona! Ti scrivo dal sito, vorrei qualche informazione.',
+);
+const waHref = `https://wa.me/${BUSINESS.phoneE164.replace('+', '')}?text=${waMessage}`;
+---
+
+<!-- Launcher -->
+<button
+  type="button"
+  id="chat-launcher"
+  aria-label="Apri l'assistente GSA"
+  aria-expanded="false"
+  aria-controls="chat-panel"
+  class="text-ink bg-brand focus-visible:outline-ink fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="h-7 w-7"
+    aria-hidden="true"
+  >
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+  </svg>
+
+  <!-- Badge rosso che attira l'attenzione -->
+  <span class="absolute -top-1 -right-1 flex h-5 w-5">
+    <span
+      class="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-70 motion-safe:animate-ping motion-reduce:hidden"
+    ></span>
+    <span
+      class="relative inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[11px] font-bold text-white ring-2 ring-white"
+      >1</span
+    >
+  </span>
+</button>
+
+<!-- Pannello -->
+<section
+  id="chat-panel"
+  role="dialog"
+  aria-modal="false"
+  aria-label="Assistente GSA"
+  hidden
+  class="fixed right-5 bottom-5 z-50 flex h-[min(70vh,560px)] w-[min(92vw,380px)] flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl"
+>
+  <header class="bg-ink flex items-center justify-between px-4 py-3 text-white">
+    <div>
+      <p class="text-sm font-bold">Assistente GSA</p>
+      <p class="text-xs text-white/60">Ti rispondo io, chiedi pure</p>
+    </div>
+    <div class="flex items-center gap-1">
+      <a
+        href={waHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Continua su WhatsApp"
+        class="flex items-center gap-1 rounded-full bg-[#25D366] px-2.5 py-1 text-xs font-semibold text-white hover:brightness-95"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          class="h-4 w-4"
+          aria-hidden="true"
+          ><path
+            d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.82 9.82 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.767.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"
+          ></path></svg
+        >
+        WhatsApp
+      </a>
+      <button
+        type="button"
+        id="chat-close"
+        aria-label="Chiudi"
+        class="rounded p-1 text-white/70 hover:text-white"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          class="h-5 w-5"
+          aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg
+        >
+      </button>
+    </div>
+  </header>
+
+  <div
+    id="chat-messages"
+    class="flex-1 space-y-3 overflow-y-auto bg-neutral-50 p-4"
+    aria-live="polite"
+  >
+  </div>
+
+  <form id="chat-form" class="flex items-end gap-2 border-t border-neutral-200 bg-white p-3">
+    <label for="chat-input" class="sr-only">Scrivi un messaggio</label>
+    <textarea
+      id="chat-input"
+      rows="1"
+      required
+      maxlength="2000"
+      placeholder="Scrivi un messaggio…"
+      class="focus:outline-brand text-ink max-h-28 flex-1 resize-none rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-2"
+    ></textarea>
+    <button
+      type="submit"
+      id="chat-send"
+      class="text-ink bg-brand rounded-lg px-3 py-2 text-sm font-semibold transition hover:brightness-95 disabled:opacity-50"
+      aria-label="Invia"
+    >
+      Invia
+    </button>
+  </form>
+</section>
+
+<script is:inline>
+  (function () {
+    var launcher = document.getElementById('chat-launcher');
+    var panel = document.getElementById('chat-panel');
+    var closeBtn = document.getElementById('chat-close');
+    var messagesEl = document.getElementById('chat-messages');
+    var form = document.getElementById('chat-form');
+    var input = document.getElementById('chat-input');
+    var sendBtn = document.getElementById('chat-send');
+    if (!launcher || !panel || !form || !input || !messagesEl) return;
+
+    var history = []; // {role, content} inviati all'API (solo scambi reali)
+    var greeted = false;
+    var busy = false;
+
+    function bubble(role, text) {
+      var wrap = document.createElement('div');
+      wrap.className = 'flex ' + (role === 'user' ? 'justify-end' : 'justify-start');
+      var b = document.createElement('div');
+      b.className =
+        'max-w-[80%] rounded-2xl px-3 py-2 text-sm ' +
+        (role === 'user'
+          ? 'bg-brand text-ink'
+          : 'bg-white border border-neutral-200 text-neutral-800');
+      b.textContent = text;
+      wrap.appendChild(b);
+      messagesEl.appendChild(wrap);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      return b;
+    }
+
+    function openPanel() {
+      panel.hidden = false;
+      launcher.setAttribute('aria-expanded', 'true');
+      launcher.style.display = 'none';
+      if (!greeted) {
+        bubble(
+          'assistant',
+          'Ciao! Sono l’assistente di Simona. Chiedimi dei servizi, delle foto o di come metterti in contatto.',
+        );
+        greeted = true;
+      }
+      setTimeout(function () {
+        input.focus();
+      }, 50);
+    }
+    function closePanel() {
+      panel.hidden = true;
+      launcher.setAttribute('aria-expanded', 'false');
+      launcher.style.display = '';
+      launcher.focus();
+    }
+
+    launcher.addEventListener('click', function () {
+      if (panel.hidden) openPanel();
+      else closePanel();
+    });
+    closeBtn.addEventListener('click', closePanel);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !panel.hidden) closePanel();
+    });
+
+    input.addEventListener('input', function () {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 112) + 'px';
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var text = input.value.trim();
+      if (!text || busy) return;
+      bubble('user', text);
+      history.push({ role: 'user', content: text });
+      input.value = '';
+      input.style.height = 'auto';
+
+      busy = true;
+      sendBtn.disabled = true;
+      var typing = bubble('assistant', '…');
+
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ messages: history }),
+      })
+        .then(function (r) {
+          return r.json().catch(function () {
+            return {};
+          });
+        })
+        .then(function (data) {
+          var reply = (data && data.reply) || (data && data.error) || 'Ops, riprova tra poco.';
+          typing.textContent = reply;
+          if (data && data.reply) history.push({ role: 'assistant', content: data.reply });
+        })
+        .catch(function () {
+          typing.textContent = 'Connessione non riuscita. Riprova o scrivimi dai contatti.';
+        })
+        .finally(function () {
+          busy = false;
+          sendBtn.disabled = false;
+          messagesEl.scrollTop = messagesEl.scrollHeight;
+          input.focus();
+        });
+    });
+  })();
+</script>

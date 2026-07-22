@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Grazie" description="Messaggio inviato correttamente." noindex={true}>
+  <div class="mx-auto max-w-2xl px-6 py-24 text-center">
+    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
+      Grazie! <span class="evidenzia">Messaggio inviato</span>
+    </h1>
+    <p class="mt-5 text-lg text-neutral-700">
+      Ho ricevuto la tua richiesta e ti risponderò il prima possibile. Per qualcosa di urgente puoi
+      chiamarmi o scrivermi su WhatsApp.
+    </p>
+    <div class="mt-8">
+      <a
+        href="/"
+        class="bg-brand text-ink rounded-full px-6 py-3 font-semibold transition hover:brightness-95"
+      >
+        Torna alla home
+      </a>
+    </div>
+  </div>
+</BaseLayout>

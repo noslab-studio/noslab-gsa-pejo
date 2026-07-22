@@ -1,6 +1,12 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Newsletter from '../components/Newsletter.astro';
+import ChatBot from '../components/ChatBot.astro';
+import SchemaOrg from '../components/SchemaOrg.astro';
 import { SITE_LANG } from '../consts';
+import logo from '../assets/logo-gsa.png';
 import '../styles/global.css';
 
 interface Props {
@@ -17,12 +23,78 @@ const { title, description, image, canonical, noindex } = Astro.props;
 <!doctype html>
 <html lang={SITE_LANG}>
   <head>
+    {/* Flag "js": abilita le animazioni solo se JS è attivo (progressive enhancement). */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
     <BaseHead {title} {description} {image} {canonical} {noindex}>
-      {/* Le pagine passano qui il loro JSON-LD tramite lo slot "jsonld". */}
+      <SchemaOrg />
+      {/* JSON-LD specifico della pagina (opzionale). */}
       <slot name="jsonld" />
     </BaseHead>
   </head>
-  <body>
-    <slot />
+  <body class="text-ink relative min-h-screen bg-white antialiased">
+    {/* Filigrana: aloni morbidi giallo/lime che scaldano il bianco. */}
+    <div
+      class="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      aria-hidden="true"
+      style="background:
+        radial-gradient(38rem 38rem at 8% -6%, rgba(255,221,0,0.13), transparent 60%),
+        radial-gradient(34rem 34rem at 102% 12%, rgba(158,225,58,0.13), transparent 60%),
+        radial-gradient(30rem 30rem at 50% 108%, rgba(255,221,0,0.10), transparent 60%);"
+    >
+      {/* Logo GSA in filigrana, tenue, presente su ogni pagina. */}
+      <img
+        src={logo.src}
+        alt=""
+        width={logo.width}
+        height={logo.height}
+        class="absolute top-1/2 -right-[6vmin] w-[46vmin] max-w-[440px] -translate-y-1/2 rotate-6 opacity-[0.06]"
+      />
+    </div>
+
+    <a
+      href="#contenuto"
+      class="focus:bg-brand focus:text-ink sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded focus:px-4 focus:py-2 focus:font-medium"
+    >
+      Vai al contenuto
+    </a>
+
+    <Header />
+
+    <main id="contenuto">
+      <slot />
+    </main>
+
+    <Newsletter />
+    <Footer />
+    <ChatBot />
+
+    {/* Reveal allo scroll (IntersectionObserver, minimale). */}
+    <script is:inline>
+      (function () {
+        var els = document.querySelectorAll('.reveal, .evidenzia, .evidenzia-lime');
+        if (!('IntersectionObserver' in window)) {
+          els.forEach(function (el) {
+            el.classList.add('is-visible');
+          });
+          return;
+        }
+        var io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-visible');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.15 },
+        );
+        els.forEach(function (el) {
+          io.observe(el);
+        });
+      })();
+    </script>
   </body>
 </html>

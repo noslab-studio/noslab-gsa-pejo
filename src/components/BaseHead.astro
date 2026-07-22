@@ -21,7 +21,7 @@ const {
 } = Astro.props;
 
 // title della pagina; se manca, usa solo il titolo del sito.
-const pageTitle = title ? `${title} — ${SITE_TITLE}` : SITE_TITLE;
+const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
 
 // Astro.site è definito in astro.config.mjs → URL assoluti affidabili.
 const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
