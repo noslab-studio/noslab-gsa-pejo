@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE_DESCRIPTION, BUSINESS } from '../consts';
 import Feedback from '../components/Feedback.astro';
+import ServiziNosLab from '../components/ServiziNosLab.astro';
 import NosLabCoin from '../components/NosLabCoin.astro';
 import hero from '../assets/hero-venezia.jpg';
 
@@ -99,6 +100,11 @@ const services = (await getCollection('services')).sort((a, b) => a.data.ordine 
         ))
       }
     </ul>
+  </section>
+
+  {/* Sinergia con NosLab, versione breve */}
+  <section class="mx-auto max-w-5xl px-6">
+    <ServiziNosLab compatto />
   </section>
 
   {/* Feedback / testimonianze */}

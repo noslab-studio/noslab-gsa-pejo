@@ -13,5 +13,21 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      // La pagina di ringraziamento è noindex: fuori dalla sitemap.
+      filter: (pagina) => !pagina.includes('/grazie'),
+      changefreq: 'monthly',
+      lastmod: new Date(),
+      serialize(voce) {
+        // Home e pagine commerciali contano più delle pagine legali.
+        const p = new URL(voce.url).pathname;
+        if (p === '/') voce.priority = 1.0;
+        else if (['/servizi/', '/fotografia/', '/contatti/'].includes(p)) voce.priority = 0.9;
+        else if (p === '/chi-sono/') voce.priority = 0.8;
+        else voce.priority = 0.3; // privacy, cookie, liberatoria, note legali
+        return voce;
+      },
+    }),
+  ],
 });

@@ -1,0 +1,32 @@
+---
+/**
+ * Structured data della singola pagina: percorso di navigazione (BreadcrumbList)
+ * più un eventuale blocco specifico (Service, ContactPage, ImageGallery...).
+ * Va passato al layout con slot="jsonld".
+ */
+import { SITE_URL } from '../consts';
+
+interface Props {
+  titolo: string;
+  percorso: string;
+  /** Nodo aggiuntivo schema.org, specifico della pagina. */
+  extra?: Record<string, unknown>;
+}
+
+const { titolo, percorso, extra } = Astro.props;
+
+const briciole = {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+    { '@type': 'ListItem', position: 2, name: titolo, item: `${SITE_URL}${percorso}` },
+  ],
+};
+
+const grafo = {
+  '@context': 'https://schema.org',
+  '@graph': extra ? [briciole, extra] : [briciole],
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(grafo)} is:inline />

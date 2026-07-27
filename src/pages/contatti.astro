@@ -1,6 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { BUSINESS } from '../consts';
+import SchemaPagina from '../components/SchemaPagina.astro';
+import { BUSINESS, SITE_URL } from '../consts';
+
+const paginaContatti = {
+  '@type': 'ContactPage',
+  url: `${SITE_URL}/contatti/`,
+  name: 'Contatti',
+  mainEntity: { '@id': `${SITE_URL}/#business` },
+};
 
 const a = BUSINESS.address;
 const mapsQuery = encodeURIComponent(`${a.street}, ${a.postalCode} ${a.city} ${a.province}`);
@@ -13,6 +21,8 @@ const inputClass =
   title="Contatti"
   description="Contatta GSA di Grassi Simona Adele: Via San Giorgio 15, 38024 Peio (TN). Telefono, email e modulo di contatto."
 >
+  <SchemaPagina slot="jsonld" titolo="Contatti" percorso="/contatti/" extra={paginaContatti} />
+
   <div class="mx-auto max-w-5xl px-6 py-16 sm:py-20">
     <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
       <span class="evidenzia">Contatti</span>

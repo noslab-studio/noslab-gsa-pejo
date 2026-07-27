@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { BUSINESS, SITE_NAME } from '../consts';
 
 const a = BUSINESS.address;
-const aggiornamento = '22 luglio 2026';
+const aggiornamento = '28 luglio 2026';
 ---
 
 <BaseLayout
@@ -59,6 +59,12 @@ const aggiornamento = '22 luglio 2026';
             <strong>Iscrizione alla newsletter</strong>: se ti iscrivi, il tuo indirizzo email, per
             inviarti le comunicazioni che hai richiesto.
           </li>
+          <li>
+            <strong>Elenco dei contatti ricevuti</strong>: i dati che ci invii tramite il modulo o
+            la newsletter vengono conservati in un elenco riservato, accessibile alla sola titolare,
+            per gestire la tua richiesta e ricordarsi di risponderti. L'elenco riporta anche lo
+            stato della conversazione (ad esempio "da ricontattare" o "chiusa").
+          </li>
         </ul>
       </section>
 
@@ -91,7 +97,8 @@ const aggiornamento = '22 luglio 2026';
         </p>
         <ul class="mt-2 list-disc space-y-2 pl-6">
           <li>
-            <strong>Netlify, Inc.</strong> (hosting del sito e gestione degli invii del modulo).
+            <strong>Netlify, Inc.</strong> (hosting del sito, gestione degli invii dei moduli e archiviazione
+            dell'elenco dei contatti ricevuti).
           </li>
           <li>
             <strong>Google Ireland Ltd. / Google LLC</strong> (servizio email tramite cui riceviamo i
@@ -116,10 +123,12 @@ const aggiornamento = '22 luglio 2026';
       <section>
         <h2 class="text-ink text-xl font-bold">6. Conservazione</h2>
         <p class="mt-2">
-          I messaggi ricevuti sono conservati per il tempo necessario a gestire la tua richiesta e
-          ad adempiere a eventuali obblighi di legge, e comunque non oltre 24 mesi dall'ultimo
-          contatto, salvo diverse esigenze. I log tecnici sono conservati secondo le policy del
-          fornitore di hosting.
+          I messaggi ricevuti e i dati presenti nell'elenco dei contatti sono conservati per il
+          tempo necessario a gestire la tua richiesta e ad adempiere a eventuali obblighi di legge,
+          e comunque non oltre 24 mesi dall'ultimo contatto, salvo diverse esigenze. Gli iscritti
+          alla newsletter restano in elenco fino alla richiesta di cancellazione. I messaggi
+          scambiati con l'assistente virtuale non vengono conservati sul sito. I log tecnici sono
+          conservati secondo le policy del fornitore di hosting.
         </p>
       </section>
 

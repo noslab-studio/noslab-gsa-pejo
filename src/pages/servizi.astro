@@ -2,17 +2,39 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ServiziNosLab from '../components/ServiziNosLab.astro';
+import SchemaPagina from '../components/SchemaPagina.astro';
+import { SITE_URL, SITE_NAME } from '../consts';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.ordine - b.data.ordine);
 const rendered = await Promise.all(
   services.map(async (s) => ({ id: s.id, data: s.data, Content: (await render(s)).Content })),
 );
+
+// Elenco dei servizi in formato leggibile dai motori di ricerca.
+const catalogo = {
+  '@type': 'OfferCatalog',
+  name: `Servizi di ${SITE_NAME}`,
+  url: `${SITE_URL}/servizi/`,
+  itemListElement: services.map((s, i) => ({
+    '@type': 'Offer',
+    position: i + 1,
+    itemOffered: {
+      '@type': 'Service',
+      name: s.data.titolo,
+      description: s.data.descrizione,
+      areaServed: 'Trentino, Provincia di Brescia, Provincia di Bergamo',
+      provider: { '@id': `${SITE_URL}/#business` },
+    },
+  })),
+};
 ---
 
 <BaseLayout
   title="Servizi"
   description="Pubblicità digitale e social, servizi fotografici, pubblicità tradizionale, gestione ufficio e fatturazione elettronica."
 >
+  <SchemaPagina slot="jsonld" titolo="Servizi" percorso="/servizi/" extra={catalogo} />
+
   <div class="mx-auto max-w-3xl px-6 py-16 sm:py-20">
     <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
       Servizi <span class="evidenzia">offerti</span>

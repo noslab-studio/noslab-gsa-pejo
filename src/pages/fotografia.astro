@@ -2,6 +2,8 @@
 import { Image, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SchemaPagina from '../components/SchemaPagina.astro';
+import { SITE_URL, SITE_NAME } from '../consts';
 
 // Import automatico di tutte le foto della gallery.
 const modules = import.meta.glob<{ default: ImageMetadata }>('../assets/foto/*.{jpg,jpeg,png}', {
@@ -30,6 +32,20 @@ const categorie = [
   title="Fotografia"
   description="Servizi fotografici a Peio: aziendale e commerciale, eventi, calendari, famiglia e gravidanza, paesaggi della Val di Pejo. Sfoglia lo showroom."
 >
+  <SchemaPagina
+    slot="jsonld"
+    titolo="Fotografia"
+    percorso="/fotografia/"
+    extra={{
+      '@type': 'ImageGallery',
+      url: `${SITE_URL}/fotografia/`,
+      name: `Portfolio fotografico di ${SITE_NAME}`,
+      about: 'Fotografia aziendale e commerciale, eventi, famiglia e gravidanza, paesaggi alpini',
+      author: { '@id': `${SITE_URL}/#owner` },
+      numberOfItems: gallery.length,
+    }}
+  />
+
   {/* Intro */}
   <section class="mx-auto max-w-5xl px-6 pt-16 pb-8 sm:pt-20">
     <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
