@@ -1,0 +1,351 @@
+---
+/**
+ * Moneta metallica con il marchio NosLab: entra saltando da fuori schermo,
+ * rimbalza sopra il bottone "Scopri i servizi" e si affianca a lato brillando
+ * di oro e lime. Al click apre un popup con un breve video (sinergia GSA + NosLab).
+ * Il video viene caricato solo all'apertura, per non pesare sulla pagina.
+ */
+---
+
+<button
+  type="button"
+  id="nslb-coin"
+  class="nslb-coin"
+  aria-label="Guarda il video: GSA e NosLab, cosa creiamo insieme"
+>
+  <span class="nslb-coin__face">
+    <svg viewBox="21.51 84.85 523.91 397.24" aria-hidden="true" focusable="false">
+      <path
+        fill="#202139"
+        d="M 475.171875 283.394531 L 475.171875 411.800781 L 373.269531 411.800781 L 373.269531 283.394531 C 373.269531 233.851562 332.945312 193.578125 283.40625 193.578125 C 233.863281 193.578125 193.585938 233.851562 193.585938 283.394531 L 193.585938 475.164062 L 91.6875 475.164062 L 91.6875 283.394531 C 91.6875 177.515625 177.527344 91.679688 283.40625 91.679688 C 389.332031 91.679688 475.171875 177.515625 475.171875 283.394531"
+      ></path>
+      <path
+        fill="#87CF3B"
+        d="M 74.226562 475.164062 L 28.34375 475.164062 L 28.34375 429.28125 L 74.226562 429.28125 Z M 74.226562 475.164062"
+      ></path>
+      <path
+        fill="#87CF3B"
+        d="M 538.515625 429.300781 L 211.042969 429.300781 L 211.042969 475.179688 L 538.515625 475.179688 Z M 538.515625 429.300781"
+      ></path>
+    </svg>
+  </span>
+  <span class="nslb-coin__shine" aria-hidden="true"></span>
+</button>
+
+{/* Popup video */}
+<dialog id="nslb-video" class="nslb-dialog" aria-label="GSA e NosLab, il video">
+  <div class="nslb-dialog__box">
+    <button type="button" class="nslb-dialog__close" data-close aria-label="Chiudi">&times;</button>
+    <video
+      id="nslb-player"
+      class="nslb-dialog__video"
+      controls
+      playsinline
+      preload="none"
+      poster="/video/noslab-gsa-poster.jpg"
+      data-src="/video/noslab-gsa.mp4"></video>
+    <div class="nslb-dialog__caption">
+      <p class="nslb-dialog__title">GSA <span>+</span> NosLab</p>
+      <p class="nslb-dialog__text">
+        Comunicazione, foto e strumenti digitali: quello che realizzo per te nasce dalla sinergia
+        con <a href="https://noslab.it" target="_blank" rel="noopener">NosLab</a>.
+      </p>
+      <a class="nslb-dialog__cta" href="/servizi/">Scopri i servizi</a>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  /* ---------- Moneta ---------- */
+  .nslb-coin {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border: 0;
+    padding: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    background: radial-gradient(
+      circle at 32% 28%,
+      #fffbe6 0%,
+      #ffe873 22%,
+      #ffd400 46%,
+      #d9a400 70%,
+      #8a6600 100%
+    );
+    box-shadow:
+      inset 0 2px 3px rgba(255, 255, 255, 0.9),
+      inset 0 -3px 6px rgba(120, 85, 0, 0.55),
+      0 6px 16px -6px rgba(22, 22, 15, 0.5),
+      0 0 0 2px #e8b900,
+      0 0 18px -2px rgba(255, 221, 0, 0.75),
+      0 0 26px -4px rgba(158, 225, 58, 0.6);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.3s ease;
+  }
+  .nslb-coin:hover {
+    transform: translateY(-3px) scale(1.06);
+    box-shadow:
+      inset 0 2px 3px rgba(255, 255, 255, 0.95),
+      inset 0 -3px 6px rgba(120, 85, 0, 0.5),
+      0 10px 22px -8px rgba(22, 22, 15, 0.55),
+      0 0 0 2px #f0c400,
+      0 0 26px 0 rgba(255, 221, 0, 0.9),
+      0 0 34px -2px rgba(158, 225, 58, 0.8);
+  }
+  .nslb-coin:focus-visible {
+    outline: 3px solid #16160f;
+    outline-offset: 3px;
+  }
+
+  .nslb-coin__face {
+    display: grid;
+    place-items: center;
+    width: 74%;
+    height: 74%;
+    border-radius: 50%;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.55), rgba(255, 200, 0, 0.15));
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8);
+  }
+  .nslb-coin__face svg {
+    width: 78%;
+    height: auto;
+    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.6));
+  }
+
+  /* Riflesso metallico che scorre */
+  .nslb-coin__shine {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .nslb-coin__shine::before {
+    content: '';
+    position: absolute;
+    top: -60%;
+    left: -120%;
+    width: 60%;
+    height: 220%;
+    background: linear-gradient(
+      100deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.85) 45%,
+      rgba(158, 225, 58, 0.55) 60%,
+      transparent 100%
+    );
+    transform: rotate(18deg);
+  }
+
+  /* ---------- Popup ---------- */
+  .nslb-dialog {
+    max-width: 96vw;
+    max-height: 96vh;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    margin: auto;
+  }
+  .nslb-dialog::backdrop {
+    background: rgba(10, 10, 8, 0.88);
+    backdrop-filter: blur(4px);
+  }
+  .nslb-dialog__box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* La finestra segue la larghezza del video: il testo va a capo dentro questa misura. */
+    width: min(88vw, 320px);
+    background: #16160f;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6);
+    border: 2px solid rgba(255, 221, 0, 0.5);
+  }
+  .nslb-dialog__video {
+    display: block;
+    width: 100%;
+    max-height: 62vh;
+    background: #000;
+  }
+  .nslb-dialog__close {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    z-index: 2;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 0;
+    border-radius: 999px;
+    background: #ffdd00;
+    color: #16160f;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .nslb-dialog__caption {
+    padding: 0.9rem 1.1rem 1.1rem;
+    color: #fff;
+    text-wrap: pretty;
+  }
+  .nslb-dialog__title {
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+  .nslb-dialog__title span {
+    color: #9ee13a;
+  }
+  .nslb-dialog__text {
+    margin-top: 0.35rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .nslb-dialog__text a {
+    color: #ffdd00;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .nslb-dialog__cta {
+    display: inline-block;
+    margin-top: 0.85rem;
+    background: #ffdd00;
+    color: #16160f;
+    font-weight: 700;
+    font-size: 0.875rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    text-decoration: none;
+  }
+
+  /* ---------- Animazioni ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Entrata: arriva da fuori, rimbalza sopra il bottone e si affianca. */
+    :global(.js) .nslb-coin {
+      animation: nslb-coin-in 2.1s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+    }
+    .nslb-coin__shine::before {
+      animation: nslb-shine 3.4s ease-in-out 2.8s infinite;
+    }
+  }
+
+  @keyframes nslb-coin-in {
+    0% {
+      transform: translate(62vw, -66vh) rotate(-1080deg) scale(0.45);
+      opacity: 0;
+    }
+    8% {
+      opacity: 1;
+    }
+    /* primo tocco sopra "Scopri i servizi" */
+    36% {
+      transform: translate(-118px, -74px) rotate(-360deg) scale(1.06);
+      animation-timing-function: cubic-bezier(0.33, 0, 0.66, 0.33);
+    }
+    48% {
+      transform: translate(-88px, -132px) rotate(-250deg) scale(1);
+    }
+    60% {
+      transform: translate(-52px, -70px) rotate(-150deg) scale(1.04);
+    }
+    72% {
+      transform: translate(-26px, -104px) rotate(-80deg) scale(1);
+    }
+    84% {
+      transform: translate(-6px, -66px) rotate(-24deg) scale(1.02);
+    }
+    92% {
+      transform: translate(0, -16px) rotate(0deg) scale(1.03);
+    }
+    97% {
+      transform: translate(0, -7px) rotate(0deg) scale(1);
+    }
+    100% {
+      transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+  }
+
+  @keyframes nslb-shine {
+    0%,
+    72% {
+      left: -120%;
+    }
+    100% {
+      left: 130%;
+    }
+  }
+
+  /* Su schermi piccoli il rimbalzo resta dentro il viewport. */
+  @media (max-width: 640px) {
+    @keyframes nslb-coin-in {
+      0% {
+        transform: translate(50vw, -50vh) rotate(-720deg) scale(0.45);
+        opacity: 0;
+      }
+      8% {
+        opacity: 1;
+      }
+      40% {
+        transform: translate(-40px, -60px) rotate(-360deg) scale(1.05);
+      }
+      55% {
+        transform: translate(-24px, -96px) rotate(-200deg) scale(1);
+      }
+      70% {
+        transform: translate(-10px, -52px) rotate(-90deg) scale(1.03);
+      }
+      85% {
+        transform: translate(0, -70px) rotate(-20deg) scale(1);
+      }
+      95% {
+        transform: translate(0, -10px) rotate(0deg) scale(1.02);
+      }
+      100% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+      }
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var coin = document.getElementById('nslb-coin');
+    var dlg = document.getElementById('nslb-video');
+    var video = document.getElementById('nslb-player');
+    if (!coin || !dlg || !video) return;
+
+    function open() {
+      // Il video viene scaricato solo ora, alla prima apertura.
+      if (!video.src) video.src = video.getAttribute('data-src');
+      if (typeof dlg.showModal === 'function') dlg.showModal();
+      else dlg.setAttribute('open', '');
+      var p = video.play();
+      if (p && p.catch) {
+        p.catch(function () {
+          // Se l'autoplay con audio è bloccato, riparte senza audio.
+          video.muted = true;
+          video.play().catch(function () {});
+        });
+      }
+    }
+
+    function close() {
+      video.pause();
+      video.currentTime = 0;
+      dlg.close();
+      coin.focus();
+    }
+
+    coin.addEventListener('click', open);
+    dlg.querySelector('[data-close]').addEventListener('click', close);
+    dlg.addEventListener('click', function (e) {
+      if (e.target === dlg) close();
+    });
+    dlg.addEventListener('close', function () {
+      video.pause();
+    });
+  })();
+</script>
