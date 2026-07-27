@@ -2,13 +2,7 @@
 /**
  * Sezione dedicata a ciò che Simona può offrire grazie alla collaborazione con NosLab:
  * sviluppo su misura, ecosistemi gestionali, coupon, assistenti AI.
- * Con `compatto` mostra la versione breve, pensata per la home.
  */
-interface Props {
-  compatto?: boolean;
-}
-const { compatto = false } = Astro.props;
-
 const capacita = [
   {
     titolo: 'Siti e piattaforme su misura',
@@ -44,7 +38,8 @@ const capacita = [
 ---
 
 <section
-  class="reveal bg-ink relative mt-12 overflow-hidden rounded-3xl px-6 py-12 text-white sm:px-10 sm:py-14"
+  id="noslab"
+  class="reveal bg-ink relative mt-12 scroll-mt-24 overflow-hidden rounded-3xl px-6 py-12 text-white sm:px-10 sm:py-14"
 >
   {/* barra d'accento NosLab */}
   <div class="from-brand via-brand-lime to-brand absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r">
@@ -65,45 +60,30 @@ const capacita = [
       la tua attività ha bisogno di qualcosa che va oltre il sito vetrina, non devi cercare altrove:
       ci pensiamo noi, con un unico interlocutore che sei abituato a sentire.
     </p>
-    {
-      !compatto && (
-        <p>
-          Dalla piattaforma gestionale che semplifica il lavoro di ogni giorno, al sistema di coupon
-          per fidelizzare i clienti, fino agli assistenti automatici che rispondono al posto tuo
-          quando sei impegnata: sono strumenti pensati per far crescere l'attività, non per
-          complicarla.
-        </p>
-      )
-    }
+    <p>
+      Dalla piattaforma gestionale che semplifica il lavoro di ogni giorno, al sistema di coupon per
+      fidelizzare i clienti, fino agli assistenti automatici che rispondono al posto tuo quando sei
+      impegnata: sono strumenti pensati per far crescere l'attività, non per complicarla.
+    </p>
   </div>
 
-  {
-    compatto ? (
-      <ul class="mt-6 flex flex-wrap gap-2">
-        {capacita.map((c) => (
-          <li class="rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-sm text-white/80">
-            {c.titolo}
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {capacita.map((c) => (
-          <li class="hover:border-brand/60 rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10">
-            <h3 class="text-brand font-bold">{c.titolo}</h3>
-            <p class="mt-2 text-sm text-white/70">{c.testo}</p>
-          </li>
-        ))}
-      </ul>
-    )
-  }
+  <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      capacita.map((c) => (
+        <li class="hover:border-brand/60 rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:bg-white/10">
+          <h3 class="text-brand font-bold">{c.titolo}</h3>
+          <p class="mt-2 text-sm text-white/70">{c.testo}</p>
+        </li>
+      ))
+    }
+  </ul>
 
   <div class="mt-8 flex flex-wrap items-center gap-4">
     <a
-      href={compatto ? '/servizi/' : '/contatti/'}
+      href="/contatti/"
       class="bg-brand text-ink rounded-full px-6 py-3 font-semibold transition hover:brightness-95"
     >
-      {compatto ? 'Vedi cosa possiamo fare' : 'Parliamone insieme'}
+      Parliamone insieme
     </a>
     <a
       href="https://noslab.it"
