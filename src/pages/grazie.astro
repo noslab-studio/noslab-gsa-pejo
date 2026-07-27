@@ -20,4 +20,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </a>
     </div>
   </div>
+
+  {
+    /*
+    Modulo tecnico non visibile: serve a Netlify per riconoscere il canale
+    "promemoria", usato dalla funzione di follow-up per inoltrare l'email a Simona.
+  */
+  }
+  <form name="promemoria" data-netlify="true" hidden>
+    <input type="text" name="oggetto" />
+    <textarea name="dettagli"></textarea>
+  </form>
 </BaseLayout>
