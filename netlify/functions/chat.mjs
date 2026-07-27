@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { getStore } from '@netlify/blobs';
 
 /**
  * Assistente AI del sito GSA di Grassi Simona Adele.
@@ -39,8 +40,38 @@ function json(obj, status = 200) {
   });
 }
 
+// Tetto di messaggi per indirizzo IP in un'ora: protegge da abusi e da costi
+// imprevisti su un endpoint pubblico. Un utente normale resta molto sotto soglia.
+const LIMITE_ORARIO = 30;
+
+async function troppeRichieste(req) {
+  try {
+    const ip =
+      req.headers.get('x-nf-client-connection-ip') ||
+      (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() ||
+      'sconosciuto';
+    const ora = new Date().toISOString().slice(0, 13); // AAAA-MM-GGTHH
+    const store = getStore('chat-limiti');
+    const chiave = `${ora}_${ip}`;
+    const contatore = (await store.get(chiave, { type: 'json' }).catch(() => null)) || { n: 0 };
+    if (contatore.n >= LIMITE_ORARIO) return true;
+    await store.setJSON(chiave, { n: contatore.n + 1 });
+    return false;
+  } catch {
+    // Se il conteggio non è disponibile non blocchiamo la conversazione.
+    return false;
+  }
+}
+
 export default async (req) => {
   if (req.method !== 'POST') return json({ error: 'Metodo non consentito' }, 405);
+
+  if (await troppeRichieste(req)) {
+    return json(
+      { error: 'Abbiamo chiacchierato parecchio! Riprova più tardi o scrivi dai contatti.' },
+      429,
+    );
+  }
 
   let body;
   try {

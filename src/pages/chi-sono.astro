@@ -1,11 +1,22 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SchemaPagina from '../components/SchemaPagina.astro';
+import { SITE_URL } from '../consts';
+
+const profilo = {
+  '@type': 'ProfilePage',
+  url: `${SITE_URL}/chi-sono/`,
+  name: 'Chi sono',
+  mainEntity: { '@id': `${SITE_URL}/#owner` },
+};
 ---
 
 <BaseLayout
   title="Chi sono"
   description="Simona Grassi Adele: commerciale con esperienza decennale, oggi consulente digitale e fotografa a Peio, in Val di Pejo."
 >
+  <SchemaPagina slot="jsonld" titolo="Chi sono" percorso="/chi-sono/" extra={profilo} />
+
   <article class="mx-auto max-w-3xl px-6 py-16 sm:py-20">
     <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">Chi sono?</h1>
 

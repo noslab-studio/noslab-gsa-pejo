@@ -98,6 +98,49 @@ const services = (await getCollection('services')).sort((a, b) => a.data.ordine 
           </li>
         ))
       }
+
+      {/* Sesta card: la sinergia con NosLab, per chiudere la griglia */}
+      <li>
+        <a
+          href="/servizi/#noslab"
+          data-tilt
+          class="group bg-ink relative block h-full overflow-hidden rounded-2xl p-6 shadow-sm transition-[transform,box-shadow] duration-200 will-change-transform [transform-style:preserve-3d] hover:shadow-2xl"
+        >
+          <span
+            class="from-brand via-brand-lime to-brand absolute inset-x-0 top-0 h-1 bg-gradient-to-r"
+            aria-hidden="true"></span>
+
+          {/* Moneta NosLab che ruota sul proprio asse */}
+          <span class="moneta-mini" aria-hidden="true">
+            <svg viewBox="21.51 84.85 523.91 397.24">
+              <path
+                fill="#202139"
+                d="M 475.171875 283.394531 L 475.171875 411.800781 L 373.269531 411.800781 L 373.269531 283.394531 C 373.269531 233.851562 332.945312 193.578125 283.40625 193.578125 C 233.863281 193.578125 193.585938 233.851562 193.585938 283.394531 L 193.585938 475.164062 L 91.6875 475.164062 L 91.6875 283.394531 C 91.6875 177.515625 177.527344 91.679688 283.40625 91.679688 C 389.332031 91.679688 475.171875 177.515625 475.171875 283.394531"
+              ></path>
+              <path
+                fill="#5f9e1f"
+                d="M 74.226562 475.164062 L 28.34375 475.164062 L 28.34375 429.28125 L 74.226562 429.28125 Z M 74.226562 475.164062"
+              ></path>
+              <path
+                fill="#5f9e1f"
+                d="M 538.515625 429.300781 L 211.042969 429.300781 L 211.042969 475.179688 L 538.515625 475.179688 Z M 538.515625 429.300781"
+              ></path>
+            </svg>
+          </span>
+
+          <h3 class="text-brand mt-3 font-bold">Tecnologia su misura</h3>
+          <p class="mt-2 text-sm text-white/70">
+            Con NosLab: piattaforme e gestionali personalizzati, sistemi di coupon e assistenti
+            automatici per la tua attività.
+          </p>
+          <span
+            class="group-hover:text-brand mt-4 inline-flex items-center gap-1 text-sm font-semibold text-white/50 transition"
+          >
+            Scopri di più
+            <span class="transition-transform group-hover:translate-x-1">→</span>
+          </span>
+        </a>
+      </li>
     </ul>
   </section>
 
@@ -153,6 +196,40 @@ const services = (await getCollection('services')).sort((a, b) => a.data.ordine 
       </div>
     </div>
   </section>
+
+  <style>
+    /* Moneta della sesta card: gira sul proprio asse con una pausa fra un giro e l'altro. */
+    .moneta-mini {
+      display: grid;
+      place-items: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: radial-gradient(circle at 34% 27%, #fffdf0, #ffef8a 22%, #ffdd00 54%, #e0a800);
+      box-shadow:
+        inset 0 1px 2px rgba(255, 255, 255, 0.9),
+        0 0 14px -2px rgba(255, 221, 0, 0.6);
+    }
+    .moneta-mini svg {
+      width: 62%;
+      height: auto;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .moneta-mini {
+        animation: moneta-gira 7s ease-in-out infinite;
+      }
+      @keyframes moneta-gira {
+        0%,
+        55% {
+          transform: rotateY(0deg);
+        }
+        100% {
+          transform: rotateY(360deg);
+        }
+      }
+    }
+  </style>
 
   <script is:inline>
     (function () {
