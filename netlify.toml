@@ -20,6 +20,51 @@
 [context.branch-deploy]
   command = "npm run build"
 
+# Vecchi indirizzi del sito precedente (Canva): chi arriva da un link salvato o
+# da un risultato di Google finisce sulla pagina giusta invece che su un errore.
+[[redirects]]
+  from = "/about"
+  to = "/chi-sono/"
+  status = 301
+
+[[redirects]]
+  from = "/about-us"
+  to = "/chi-sono/"
+  status = 301
+
+[[redirects]]
+  from = "/services"
+  to = "/servizi/"
+  status = 301
+
+[[redirects]]
+  from = "/contact"
+  to = "/contatti/"
+  status = 301
+
+[[redirects]]
+  from = "/feedback"
+  to = "/#recensioni"
+  status = 301
+
+[[redirects]]
+  from = "/home"
+  to = "/"
+  status = 301
+
+# Un solo indirizzo per la home: evita che Google veda due pagine identiche.
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+  force = true
+
+# Vecchie immagini del sito Canva: portano alla galleria fotografica.
+[[redirects]]
+  from = "/media/*"
+  to = "/fotografia/"
+  status = 301
+
 # Il sito ha un solo indirizzo ufficiale: chi arriva dal sottodominio Netlify
 # viene portato sul dominio (evita contenuti duplicati agli occhi di Google).
 # I deploy preview hanno un altro hostname e non sono toccati.
