@@ -20,6 +20,15 @@
 [context.branch-deploy]
   command = "npm run build"
 
+# Il sito ha un solo indirizzo ufficiale: chi arriva dal sottodominio Netlify
+# viene portato sul dominio (evita contenuti duplicati agli occhi di Google).
+# I deploy preview hanno un altro hostname e non sono toccati.
+[[redirects]]
+  from = "https://noslab-gsa-pejo.netlify.app/*"
+  to = "https://gsa-pejo.com/:splat"
+  status = 301
+  force = true
+
 # Header di sicurezza su tutte le risposte.
 # La CSP blocca l'esecuzione di codice o il caricamento di risorse da domini esterni:
 # il sito è autosufficiente, quindi tutto arriva da 'self'. Gli script e gli stili in
