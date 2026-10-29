@@ -10,6 +10,17 @@ export const config = { path: '/api/contatti' };
 const STATI = ['nuovo', 'contattato', 'in_trattativa', 'cliente', 'perso'];
 const APERTI = ['nuovo', 'contattato', 'in_trattativa'];
 
+/**
+ * Chi si è iscritto alla newsletter non è una persona da richiamare al telefono:
+ * non compare mai tra le cose da fare, qualunque stato abbia in archivio
+ * (vale anche per le iscrizioni salvate prima di questa correzione).
+ */
+const daRichiamare = (l, oggi) =>
+  l.fonte !== 'newsletter' &&
+  APERTI.includes(l.stato) &&
+  Boolean(l.prossimoFollowUp) &&
+  l.prossimoFollowUp <= oggi;
+
 const esc = (s) =>
   String(s ?? '').replace(
     /[&<>"']/g,
@@ -26,14 +37,14 @@ const oggiISO = (giorniDopo = 0) =>
 
 function pagina(leads, token) {
   const oggi = oggiISO();
-  const aperti = leads.filter((l) => APERTI.includes(l.stato));
-  const daFare = aperti.filter((l) => l.prossimoFollowUp && l.prossimoFollowUp <= oggi).length;
+  const iscritti = leads.filter((l) => l.fonte === 'newsletter');
+  const aperti = leads.filter((l) => l.fonte !== 'newsletter' && APERTI.includes(l.stato));
+  const daFare = leads.filter((l) => daRichiamare(l, oggi)).length;
 
   const righe =
     leads
       .map((l) => {
-        const urgente =
-          APERTI.includes(l.stato) && l.prossimoFollowUp && l.prossimoFollowUp <= oggi;
+        const urgente = daRichiamare(l, oggi);
         const recapiti = [
           l.email ? `<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>` : '',
           l.telefono ? `<a href="tel:${esc(l.telefono)}">${esc(l.telefono)}</a>` : '',
@@ -45,9 +56,11 @@ function pagina(leads, token) {
           .map((s) => `<button name="stato" value="${s}" class="b">${s.replace('_', ' ')}</button>`)
           .join('');
 
+        const chi = l.nome || l.email || l.telefono || 'senza nome';
+
         return `<tr class="${urgente ? 'urgente' : ''}">
         <td>
-          <strong>${esc(l.nome || 'senza nome')}</strong>
+          <strong>${esc(chi)}</strong>
           ${urgente ? '<span class="tag">da richiamare</span>' : ''}
           <div class="sm">${recapiti}</div>
           ${l.messaggio ? `<div class="msg">${esc(l.messaggio).slice(0, 300)}</div>` : ''}
@@ -59,6 +72,9 @@ function pagina(leads, token) {
             <input type="hidden" name="token" value="${esc(token)}" />
             <input type="hidden" name="id" value="${esc(l.id)}" />
             ${bottoni}
+            <button name="elimina" value="1" class="b elimina"
+              onclick="return confirm('Eliminare questo contatto? Non si torna indietro.')"
+            >elimina</button>
           </form>
         </td>
       </tr>`;
@@ -86,16 +102,22 @@ function pagina(leads, token) {
   .azioni{display:flex;flex-wrap:wrap;gap:.3rem}
   .b{border:1px solid #d8d6cc;background:#fff;border-radius:999px;padding:.25rem .6rem;font-size:.72rem;cursor:pointer}
   .b:hover{background:#ffdd00;border-color:#ffdd00}
+  .elimina{color:#9b2c2c;border-color:#e8cfcf}
+  .elimina:hover{background:#9b2c2c;border-color:#9b2c2c;color:#fff}
 </style></head><body>
 <header><h1>Contatti ricevuti dal sito</h1></header>
 <div class="cnt">
   <div class="riepilogo">
     <div><b>${leads.length}</b><span class="sm">totali</span></div>
-    <div><b>${aperti.length}</b><span class="sm">aperti</span></div>
+    <div><b>${aperti.length}</b><span class="sm">richieste aperte</span></div>
     <div><b>${daFare}</b><span class="sm">da richiamare oggi</span></div>
+    <div><b>${iscritti.length}</b><span class="sm">iscritti newsletter</span></div>
   </div>
   <table><tbody>${righe}</tbody></table>
-  <p class="sm">Pagina privata: non compare nel sito e non finisce su Google.</p>
+  <p class="sm">
+    Pagina privata: non compare nel sito e non finisce su Google. Questo elenco non manda
+    nessuna email: i messaggi nuovi arrivano come sempre dal modulo contatti.
+  </p>
 </div></body></html>`;
 }
 
@@ -110,7 +132,7 @@ export default async (req) => {
   if (req.method === 'POST') {
     const form = await req.formData();
     token = form.get('token');
-    azione = { id: form.get('id'), stato: form.get('stato') };
+    azione = { id: form.get('id'), stato: form.get('stato'), elimina: form.get('elimina') === '1' };
   }
 
   if (!atteso || token !== atteso) {
@@ -118,6 +140,15 @@ export default async (req) => {
   }
 
   const elenco = getStore('lead');
+
+  // Rimozione dall'archivio (contatti di prova, doppioni, richieste di cancellazione).
+  if (azione?.id && azione.elimina) {
+    await elenco.delete(azione.id).catch(() => {});
+    return new Response(null, {
+      status: 303,
+      headers: { location: `/api/contatti?token=${encodeURIComponent(token)}` },
+    });
+  }
 
   // Aggiornamento stato.
   if (azione?.id && STATI.includes(azione.stato)) {

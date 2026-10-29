@@ -2,8 +2,11 @@ import { getStore } from '@netlify/blobs';
 
 /**
  * Salva ogni contatto ricevuto dai moduli in un elenco leggero (archivio Netlify),
- * così restano tracciati per i promemoria di ricontatto.
+ * consultabile dalla pagina privata /api/contatti.
  * L'email immediata a Simona continua ad arrivare dai Netlify Forms.
+ *
+ * Chi si iscrive alla newsletter NON è un contatto da richiamare: viene salvato
+ * come iscritto, senza data di ricontatto, così non finisce tra le cose da fare.
  *
  * Viene chiamata dal webhook Netlify "submission_created".
  * Variabile richiesta: LEAD_WEBHOOK_TOKEN
@@ -60,14 +63,24 @@ export default async (req) => {
   const c = estraiContatto(body);
   if (!c.email && !c.telefono) return risposta({ error: 'Contatto senza recapiti' }, 422);
 
+  const iscrizione = c.fonte === 'newsletter';
+
   const lead = {
     id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
     creato: new Date().toISOString(),
     ...c,
-    stato: 'nuovo', // nuovo | contattato | in_trattativa | cliente | perso
-    prossimoFollowUp: oggiISO(2), // primo ricontatto suggerito fra 2 giorni
+    // iscritto = solo newsletter; gli altri: nuovo | contattato | in_trattativa | cliente | perso
+    stato: iscrizione ? 'iscritto' : 'nuovo',
+    // Un'iscrizione alla newsletter non si richiama: niente data di ricontatto.
+    prossimoFollowUp: iscrizione ? null : oggiISO(2),
     note: '',
-    storico: [{ data: new Date().toISOString(), tipo: 'arrivato', note: `Modulo ${c.fonte}` }],
+    storico: [
+      {
+        data: new Date().toISOString(),
+        tipo: 'arrivato',
+        note: iscrizione ? 'Iscrizione alla newsletter' : 'Richiesta dal modulo contatti',
+      },
+    ],
   };
 
   try {
