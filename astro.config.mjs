@@ -8,6 +8,10 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   // URL di produzione: usato per canonical, Open Graph e sitemap. Allineato a SITE_URL.
   site: 'https://gsa-pejo.com',
+  // La compressione toglieva lo spazio fra una riga di testo e il link o il
+  // grassetto che va a capo (Prettier li spezza così): uscivano parole
+  // incollate come «nellaCookie Policy». Netlify comprime comunque con gzip/brotli.
+  compressHTML: false,
 
   vite: {
     plugins: [tailwindcss()],

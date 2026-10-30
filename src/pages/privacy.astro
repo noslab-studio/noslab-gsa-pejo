@@ -52,8 +52,13 @@ const aggiornamento = '28 luglio 2026';
           </li>
           <li>
             <strong>Messaggi all'assistente virtuale</strong>: il testo che scrivi nella chat del
-            sito viene inviato a un servizio di intelligenza artificiale per generare la risposta.
-            Non inserire nella chat dati personali non necessari.
+            sito viene inviato ad Anthropic, PBC (USA) per generare la risposta. Il sito non
+            conserva le conversazioni. Non inserire nella chat dati personali non necessari.
+          </li>
+          <li>
+            <strong>Protezione dagli abusi della chat</strong>: per limitare il numero di messaggi,
+            a ogni richiesta registriamo un'impronta cifrata non reversibile dell'indirizzo IP, mai
+            l'indirizzo in chiaro, con data e ora. Viene cancellata automaticamente entro 48 ore.
           </li>
           <li>
             <strong>Iscrizione alla newsletter</strong>: se ti iscrivi, il tuo indirizzo email, per
@@ -83,6 +88,10 @@ const aggiornamento = '28 luglio 2026';
             del titolare (art. 6.1.f).
           </li>
           <li>
+            Protezione della chat dagli abusi tramite l'impronta cifrata dell'indirizzo IP: base
+            giuridica il <strong>legittimo interesse</strong> del titolare (art. 6.1.f).
+          </li>
+          <li>
             Invio della newsletter, se ti iscrivi: base giuridica il <strong>consenso</strong>
             (art. 6.1.a), che puoi revocare in qualsiasi momento.
           </li>
@@ -105,8 +114,8 @@ const aggiornamento = '28 luglio 2026';
             messaggi).
           </li>
           <li>
-            <strong>Anthropic</strong> (fornisce il modello di intelligenza artificiale che genera le
-            risposte dell'assistente virtuale del sito).
+            <strong>Anthropic, PBC</strong>, Stati Uniti (fornisce il modello di intelligenza
+            artificiale che genera le risposte dell'assistente virtuale del sito).
           </li>
         </ul>
       </section>
@@ -114,9 +123,10 @@ const aggiornamento = '28 luglio 2026';
       <section>
         <h2 class="text-ink text-xl font-bold">5. Trasferimenti fuori dall'Unione Europea</h2>
         <p class="mt-2">
-          Alcuni fornitori (es. Netlify e Google) possono trattare dati anche negli Stati Uniti. In
-          tal caso il trasferimento avviene sulla base di garanzie adeguate previste dal GDPR, come
-          le Clausole Contrattuali Standard della Commissione Europea.
+          Alcuni fornitori (Netlify, Google e Anthropic) possono trattare dati anche negli Stati
+          Uniti; i messaggi della chat sono elaborati da Anthropic negli Stati Uniti. In tal caso il
+          trasferimento avviene sulla base di garanzie adeguate previste dal GDPR, come le Clausole
+          Contrattuali Standard della Commissione Europea.
         </p>
       </section>
 
@@ -127,7 +137,8 @@ const aggiornamento = '28 luglio 2026';
           tempo necessario a gestire la tua richiesta e ad adempiere a eventuali obblighi di legge,
           e comunque non oltre 24 mesi dall'ultimo contatto, salvo diverse esigenze. Gli iscritti
           alla newsletter restano in elenco fino alla richiesta di cancellazione. I messaggi
-          scambiati con l'assistente virtuale non vengono conservati sul sito. I log tecnici sono
+          scambiati con l'assistente virtuale non vengono conservati sul sito; l'impronta cifrata
+          dell'indirizzo IP usata contro gli abusi è cancellata entro 48 ore. I log tecnici sono
           conservati secondo le policy del fornitore di hosting.
         </p>
       </section>

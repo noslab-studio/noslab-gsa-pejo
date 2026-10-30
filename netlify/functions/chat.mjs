@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { getStore } from '@netlify/blobs';
+import { createHmac, randomUUID } from 'node:crypto';
 
 /**
  * Assistente AI del sito GSA di Grassi Simona Adele.
@@ -71,26 +72,49 @@ function testoSemplice(testo) {
     .trim();
 }
 
-// Tetto di messaggi per indirizzo IP in un'ora: protegge da abusi e da costi
-// imprevisti su un endpoint pubblico. Un utente normale resta molto sotto soglia.
+// Limiti anti-abuso su un endpoint pubblico che costa a ogni richiesta.
+// Per visitatore in un'ora (un utente normale resta molto sotto) e per tutto
+// il sito in un giorno, così la spesa massima giornaliera è nota a priori.
 const LIMITE_ORARIO = 30;
+const LIMITE_GIORNALIERO = 400;
+// Tetto ai caratteri di conversazione inviati al modello a ogni richiesta.
+const MAX_CARATTERI = 8000;
 
+// Chi scrive, senza conservarne l'IP: impronta HMAC con un segreto del server
+// (non ricostruibile dall'archivio). Per IPv6 conta il blocco /64, perché
+// un singolo utente ne controlla milioni di indirizzi.
+function impronta(req) {
+  const ip =
+    req.headers.get('x-nf-client-connection-ip') ||
+    (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() ||
+    'sconosciuto';
+  const rete = ip.includes(':') ? ip.split(':').slice(0, 4).join(':') : ip;
+  return createHmac('sha256', process.env.ANTHROPIC_API_KEY || 'gsa')
+    .update(rete)
+    .digest('hex')
+    .slice(0, 16);
+}
+
+// Ogni richiesta scrive una chiave sua (giorno/ora/impronta/casuale) e poi
+// conta quelle già presenti: niente lettura-e-riscrittura dello stesso
+// contatore, quindi le richieste in parallelo non si scavalcano.
+// Se l'archivio non risponde si blocca: meglio una chat ferma che una spesa
+// senza tetto. Le chiavi vecchie le cancella ogni notte pulizia-chat.mjs.
 async function troppeRichieste(req) {
   try {
-    const ip =
-      req.headers.get('x-nf-client-connection-ip') ||
-      (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() ||
-      'sconosciuto';
-    const ora = new Date().toISOString().slice(0, 13); // AAAA-MM-GGTHH
-    const store = getStore('chat-limiti');
-    const chiave = `${ora}_${ip}`;
-    const contatore = (await store.get(chiave, { type: 'json' }).catch(() => null)) || { n: 0 };
-    if (contatore.n >= LIMITE_ORARIO) return true;
-    await store.setJSON(chiave, { n: contatore.n + 1 });
-    return false;
+    const store = getStore({ name: 'chat-limiti', consistency: 'strong' });
+    const adesso = new Date().toISOString();
+    const giorno = adesso.slice(0, 10); // AAAA-MM-GG
+    const ora = adesso.slice(11, 13);
+    const chi = impronta(req);
+    await store.set(`${giorno}/${ora}/${chi}/${randomUUID()}`, '');
+
+    const { blobs } = await store.list({ prefix: `${giorno}/` });
+    if (blobs.length > LIMITE_GIORNALIERO) return true;
+    const mie = blobs.filter((b) => b.key.startsWith(`${giorno}/${ora}/${chi}/`)).length;
+    return mie > LIMITE_ORARIO;
   } catch {
-    // Se il conteggio non è disponibile non blocchiamo la conversazione.
-    return false;
+    return true;
   }
 }
 
@@ -125,6 +149,12 @@ export default async (req) => {
   if (messages.length === 0 || messages[messages.length - 1].role !== 'user') {
     return json({ error: 'Conversazione non valida' }, 400);
   }
+  // Conversazioni lunghe: si tengono gli scambi più recenti entro il tetto.
+  // L'API vuole che la conversazione inizi con un messaggio dell'utente.
+  let totale = messages.reduce((n, m) => n + m.content.length, 0);
+  while (messages.length > 1 && (totale > MAX_CARATTERI || messages[0].role !== 'user')) {
+    totale -= messages.shift().content.length;
+  }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
@@ -134,8 +164,8 @@ export default async (req) => {
   const client = new Anthropic({ apiKey });
   try {
     const response = await client.messages.create({
-      model: process.env.CHAT_MODEL || 'claude-opus-4-8',
-      max_tokens: 1024,
+      model: process.env.CHAT_MODEL || 'claude-haiku-4-5',
+      max_tokens: 600,
       system: KNOWLEDGE,
       messages,
     });
