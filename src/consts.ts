@@ -10,9 +10,15 @@ export const SITE_URL = 'https://gsa-pejo.com';
 export const SITE_NAME = 'GSA di Grassi Simona Adele';
 export const SITE_TAGLINE = 'Consulente digitale e fotografia';
 export const SITE_TITLE = `${SITE_NAME} · ${SITE_TAGLINE}`;
+/**
+ * Title di Google: la home ha nome e località, le altre pagine un suffisso
+ * corto, così restano sotto i 60 caratteri e non vengono troncate.
+ */
+export const HOME_TITLE = `${SITE_NAME} · Consulente digitale a Peio`;
+export const TITLE_SUFFIX = 'GSA Pejo';
 export const SITE_DESCRIPTION =
-  'GSA di Grassi Simona Adele: consulenza pubblicitaria e social, servizi fotografici, ' +
-  'gestione ufficio e fatturazione elettronica. In Val di Pejo (Trentino), per aziende e privati.';
+  'Consulenza social e pubblicità, fotografia, gestione ufficio e fatturazione ' +
+  'elettronica a Peio, in Val di Pejo (Trentino), per aziende e privati.';
 
 export const SITE_LANG = 'it';
 export const SITE_LOCALE = 'it_IT';
