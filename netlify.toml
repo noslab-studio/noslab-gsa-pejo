@@ -106,11 +106,3 @@
   [headers.values]
     Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
 
-# Pagina privata dei contatti: mai in cache, nessun referrer in uscita
-# (così il token non finisce nei log di altri siti).
-[[headers]]
-  for = "/api/contatti"
-  [headers.values]
-    Cache-Control = "no-store, max-age=0"
-    Referrer-Policy = "no-referrer"
-    X-Robots-Tag = "noindex, nofollow"
