@@ -1,8 +1,9 @@
 import { getStore } from '@netlify/blobs';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 
 /**
  * Pagina privata con l'elenco dei contatti ricevuti e i pulsanti per aggiornare
- * lo stato. Si apre solo con il token: /api/contatti?token=...
+ * lo stato. Si apre da /api/contatti scrivendo la chiave di accesso.
  * Non è indicizzabile e non è linkata da nessuna parte del sito.
  */
 export const config = { path: '/api/contatti' };
@@ -35,7 +36,7 @@ const oggiISO = (giorniDopo = 0) =>
     new Date(Date.now() + giorniDopo * 86400000),
   );
 
-function pagina(leads, token) {
+function pagina(leads) {
   const oggi = oggiISO();
   const iscritti = leads.filter((l) => l.fonte === 'newsletter');
   const aperti = leads.filter((l) => l.fonte !== 'newsletter' && APERTI.includes(l.stato));
@@ -69,7 +70,6 @@ function pagina(leads, token) {
         <td class="sm"><strong>${esc(l.stato).replace('_', ' ')}</strong><br />ricontatto: ${esc(l.prossimoFollowUp || '-')}</td>
         <td>
           <form method="POST" class="azioni">
-            <input type="hidden" name="token" value="${esc(token)}" />
             <input type="hidden" name="id" value="${esc(l.id)}" />
             ${bottoni}
             <button name="elimina" value="1" class="b elimina"
@@ -87,7 +87,7 @@ function pagina(leads, token) {
 <title>Contatti ricevuti · GSA</title>
 <style>
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#faf9f5;color:#16160f}
-  header{background:#16160f;color:#fff;padding:1.1rem 1.25rem;border-bottom:4px solid #ffdd00}
+  header{background:#16160f;color:#fff;padding:1.1rem 1.25rem;border-bottom:4px solid #ffdd00;display:flex;justify-content:space-between;align-items:center}
   h1{margin:0;font-size:1.15rem}
   .cnt{padding:1rem 1.25rem;max-width:1000px;margin:0 auto}
   .riepilogo{display:flex;gap:1.5rem;margin:0 0 1rem;flex-wrap:wrap}
@@ -105,7 +105,9 @@ function pagina(leads, token) {
   .elimina{color:#9b2c2c;border-color:#e8cfcf}
   .elimina:hover{background:#9b2c2c;border-color:#9b2c2c;color:#fff}
 </style></head><body>
-<header><h1>Contatti ricevuti dal sito</h1></header>
+<header><h1>Contatti ricevuti dal sito</h1>
+  <form method="POST" class="esci"><button name="esci" value="1" class="b">esci</button></form>
+</header>
 <div class="cnt">
   <div class="riepilogo">
     <div><b>${leads.length}</b><span class="sm">totali</span></div>
@@ -121,33 +123,121 @@ function pagina(leads, token) {
 </div></body></html>`;
 }
 
+function paginaAccesso(errore) {
+  return `<!doctype html><html lang="it"><head><meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Accesso · Contatti GSA</title>
+<style>
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#faf9f5;color:#16160f;display:grid;place-items:center;min-height:100vh}
+  form{background:#fff;border:1px solid #e6e4dc;border-top:4px solid #ffdd00;border-radius:.9rem;padding:1.5rem;width:min(90vw,360px)}
+  h1{margin:0 0 1rem;font-size:1.1rem}
+  input{width:100%;box-sizing:border-box;padding:.6rem;border:1px solid #d8d6cc;border-radius:.5rem;font-size:1rem}
+  button{margin-top:.8rem;width:100%;padding:.6rem;border:0;border-radius:999px;background:#ffdd00;font-weight:700;cursor:pointer}
+  .err{color:#9b2c2c;font-size:.85rem}
+</style></head><body>
+<form method="POST">
+  <h1>Contatti ricevuti dal sito</h1>
+  ${errore ? '<p class="err">Chiave non valida.</p>' : ''}
+  <label for="chiave">Chiave di accesso</label>
+  <input id="chiave" name="accesso" type="password" autocomplete="current-password" required autofocus />
+  <button>Entra</button>
+</form></body></html>`;
+}
+
+// Accesso senza token nell'URL (che finirebbe in cronologia, segnalibri e log):
+// la chiave si scrive una volta in un modulo e la sessione vive in un cookie
+// HttpOnly firmato, valido 12 ore. Se è impostata LEAD_ADMIN_TOKEN la pagina
+// usa quella e il webhook resta con LEAD_WEBHOOK_TOKEN: chi vede l'URL del
+// webhook nella configurazione di Netlify non può leggere i contatti.
+const COOKIE = 'gsa_contatti';
+const DURATA_SESSIONE = 12 * 3600;
+
+const uguali = (a, b) => {
+  const x = Buffer.from(String(a ?? ''));
+  const y = Buffer.from(String(b ?? ''));
+  return x.length === y.length && timingSafeEqual(x, y);
+};
+
+const firma = (chiave, scadenza) =>
+  createHmac('sha256', chiave).update(`sessione:${scadenza}`).digest('hex');
+
+function sessioneValida(req, chiave) {
+  const valore = (req.headers.get('cookie') || '')
+    .split(';')
+    .map((c) => c.trim())
+    .find((c) => c.startsWith(`${COOKIE}=`))
+    ?.slice(COOKIE.length + 1);
+  const [scadenza, f] = (valore || '').split('.');
+  return Number(scadenza) > Date.now() / 1000 && uguali(f, firma(chiave, scadenza));
+}
+
 export default async (req) => {
   const url = new URL(req.url);
-  const atteso = process.env.LEAD_WEBHOOK_TOKEN;
-  const headers = { 'content-type': 'text/html; charset=utf-8', 'x-robots-tag': 'noindex' };
+  const chiave = process.env.LEAD_ADMIN_TOKEN || process.env.LEAD_WEBHOOK_TOKEN;
+  const headers = {
+    'content-type': 'text/html; charset=utf-8',
+    'x-robots-tag': 'noindex',
+    'cache-control': 'no-store',
+    'referrer-policy': 'no-referrer',
+    'x-frame-options': 'DENY',
+    'content-security-policy':
+      "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
+  };
+  const torna = (extra = {}) =>
+    new Response(null, {
+      status: 303,
+      headers: { ...headers, location: '/api/contatti', ...extra },
+    });
 
-  let token = url.searchParams.get('token');
-  let azione = null;
+  if (!chiave) return new Response('<h1>Non configurato</h1>', { status: 503, headers });
 
+  let form = null;
   if (req.method === 'POST') {
-    const form = await req.formData();
-    token = form.get('token');
-    azione = { id: form.get('id'), stato: form.get('stato'), elimina: form.get('elimina') === '1' };
+    // Le azioni arrivano solo da questa pagina: SameSite=Strict sul cookie più
+    // il controllo dell'origine bloccano i moduli inviati da altri siti.
+    const origine = req.headers.get('origin');
+    if (origine && origine !== url.origin) {
+      return new Response('<h1>Richiesta non valida</h1>', { status: 403, headers });
+    }
+    try {
+      form = await req.formData();
+    } catch {
+      return new Response('<h1>Richiesta non valida</h1>', { status: 400, headers });
+    }
   }
 
-  if (!atteso || token !== atteso) {
-    return new Response('<h1>Non autorizzato</h1>', { status: 401, headers });
+  if (form?.has('accesso')) {
+    if (!uguali(form.get('accesso'), chiave)) {
+      return new Response(paginaAccesso(true), { status: 401, headers });
+    }
+    const scadenza = Math.floor(Date.now() / 1000) + DURATA_SESSIONE;
+    return torna({
+      'set-cookie': `${COOKIE}=${scadenza}.${firma(chiave, scadenza)}; Path=/api/contatti; Max-Age=${DURATA_SESSIONE}; HttpOnly; Secure; SameSite=Strict`,
+    });
   }
 
+  if (!sessioneValida(req, chiave)) {
+    return new Response(paginaAccesso(false), { status: 401, headers });
+  }
+
+  if (form?.has('esci')) {
+    return torna({
+      'set-cookie': `${COOKIE}=; Path=/api/contatti; Max-Age=0; HttpOnly; Secure; SameSite=Strict`,
+    });
+  }
+
+  const azione = form && {
+    id: form.get('id'),
+    stato: form.get('stato'),
+    elimina: form.get('elimina') === '1',
+  };
   const elenco = getStore('lead');
 
   // Rimozione dall'archivio (contatti di prova, doppioni, richieste di cancellazione).
   if (azione?.id && azione.elimina) {
     await elenco.delete(azione.id).catch(() => {});
-    return new Response(null, {
-      status: 303,
-      headers: { location: `/api/contatti?token=${encodeURIComponent(token)}` },
-    });
+    return torna();
   }
 
   // Aggiornamento stato.
@@ -164,10 +254,7 @@ export default async (req) => {
         ],
       });
     }
-    return new Response(null, {
-      status: 303,
-      headers: { location: `/api/contatti?token=${encodeURIComponent(token)}` },
-    });
+    return torna();
   }
 
   const { blobs } = await elenco.list();
@@ -177,5 +264,5 @@ export default async (req) => {
     .filter(Boolean)
     .sort((a, b) => String(b.creato).localeCompare(String(a.creato)));
 
-  return new Response(pagina(leads, token), { headers });
+  return new Response(pagina(leads), { headers });
 };

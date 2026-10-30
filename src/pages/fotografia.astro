@@ -9,13 +9,44 @@ import { SITE_URL, SITE_NAME } from '../consts';
 const modules = import.meta.glob<{ default: ImageMetadata }>('../assets/foto/*.{jpg,jpeg,png}', {
   eager: true,
 });
-const gallery = Object.values(modules).map((m) => m.default);
+// Descrizione di ogni scatto per chi usa un lettore di schermo e per Google
+// Immagini. Una foto nuova senza voce qui riceve una descrizione generica.
+const descrizioni: Record<string, string> = {
+  '44aeb6eb3c00166273be6972d565d704': 'Bombo su un ramo di ciliegio in fiore',
+  '66765583ab8116ccbf8088c123c99be0':
+    'Sciatore con casco e maschera e un gatto bianco e nero sulla spalla',
+  '69494c096c0963f62ec77a097bc7daee':
+    'Mucca che sbircia in primo piano su un pascolo alpino, tra larici e nuvole',
+  '6d4672608da1bfc476e566e6e54bd899': 'Stella alpina tra le felci, in primo piano',
+  '718b047d4b2c0268d08a5280097e6ee5':
+    'Ritratto di una ragazza seduta su un pontile di legno, tra le barche sul lago',
+  '8dcd89a90c99cd3cbfb47aaf3ad12bb9':
+    'Mucca al pascolo che si avvicina all’obiettivo, con le montagne sullo sfondo',
+  '88057c4dbbd6d8f6588ae788b4790176': 'Trattore verde fotografato dal basso tra le fronde',
+  '8a193d3cf003c07d140828747d08f4ec': 'Ragazza sorridente in gondola lungo un canale di Venezia',
+  ae493804312a802a667e5159501414c8: 'Due cavalli, uno grigio e uno baio, che corrono sulla neve',
+  cd4e7ebe0667a0144371b6077b5fd4ce:
+    'Paese di montagna illuminato di notte in una valle innevata, sotto il cielo stellato',
+  ddc747cd0cdcd51ecbb899f647703088:
+    'Sala d’attesa aziendale con divano grigio e una grande foto d’epoca di un’auto',
+  f32b007ef01906e393de8d88281fa346:
+    'Servizio fotografico di gravidanza all’aperto, futura mamma di profilo',
+  f75d942b767b2c0bb8204641eb065405: 'Due husky che si annusano, in primo piano',
+};
+
+const gallery = Object.entries(modules).map(([percorso, m]) => {
+  const nome = percorso
+    .split('/')
+    .pop()!
+    .replace(/\.\w+$/, '');
+  return { img: m.default, alt: descrizioni[nome] ?? `Fotografia dal portfolio di ${SITE_NAME}` };
+});
 
 // Versione grande (per il lightbox a schermo intero).
 const items = await Promise.all(
-  gallery.map(async (img) => {
+  gallery.map(async ({ img, alt }) => {
     const full = await getImage({ src: img, width: 1600, format: 'webp' });
-    return { img, fullSrc: full.src };
+    return { img, alt, fullSrc: full.src };
   }),
 );
 
@@ -29,7 +60,7 @@ const categorie = [
 ---
 
 <BaseLayout
-  title="Fotografia"
+  title="Fotografa a Peio, in Val di Pejo"
   description="Servizi fotografici a Peio: aziendale e commerciale, eventi, calendari, famiglia e gravidanza, paesaggi della Val di Pejo. Sfoglia lo showroom."
 >
   <SchemaPagina
@@ -89,7 +120,7 @@ const categorie = [
             >
               <Image
                 src={it.img}
-                alt={`Scatto ${i + 1} dal portfolio fotografico di GSA di Grassi Simona Adele`}
+                alt={it.alt}
                 widths={[300, 500, 800]}
                 sizes="(min-width: 1024px) 30vw, 45vw"
                 class="w-full object-cover transition duration-500 group-hover:scale-[1.06]"
@@ -118,7 +149,7 @@ const categorie = [
           target="_blank"
           rel="noopener"
           class="decoration-brand font-semibold underline decoration-2 underline-offset-4"
-          >scarica la liberatoria (PDF)</a
+          >apri la liberatoria da stampare</a
         >.
       </p>
     </div>

@@ -142,13 +142,19 @@ const Stelle = (size: string) => Array.from({ length: 5 }).map(() => size);
           h = 700;
         var left = Math.max(0, (screen.width - w) / 2);
         var top = Math.max(0, (screen.height - h) / 2);
+        // Senza «noopener» fra le opzioni: con quella window.open restituisce
+        // sempre null, il preventDefault non scattava e si aprivano sia il
+        // popup sia una nuova scheda. Il legame con la pagina si taglia a mano.
         var win = window.open(
           el.href,
           'gsa-recensione',
-          'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top + ',noopener,noreferrer',
+          'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top,
         );
         // Se il popup è bloccato, lascia proseguire il link normale (nuova scheda).
-        if (win) e.preventDefault();
+        if (win) {
+          win.opener = null;
+          e.preventDefault();
+        }
       });
     });
   </script>
