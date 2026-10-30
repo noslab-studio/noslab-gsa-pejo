@@ -55,7 +55,7 @@ const waHref = `https://wa.me/${BUSINESS.phoneE164.replace('+', '')}?text=${waMe
   <header class="bg-ink flex items-center justify-between px-4 py-3 text-white">
     <div>
       <p class="text-sm font-bold">Assistente GSA</p>
-      <p class="text-xs text-white/60">Ti rispondo io, chiedi pure</p>
+      <p class="text-xs text-white/60">Assistente virtuale con intelligenza artificiale</p>
     </div>
     <div class="flex items-center gap-1">
       <a
@@ -123,6 +123,13 @@ const waHref = `https://wa.me/${BUSINESS.phoneE164.replace('+', '')}?text=${waMe
       Invia
     </button>
   </form>
+  <p
+    class="border-t border-neutral-100 bg-white px-3 pb-2 text-[11px] leading-snug text-neutral-600"
+  >
+    Risponde un'intelligenza artificiale, non Simona: le risposte possono contenere errori e non
+    sono impegni commerciali. I messaggi sono elaborati da Anthropic (USA), vedi la
+    <a href="/privacy/" class="underline">privacy</a>.
+  </p>
 </section>
 
 <script is:inline>
@@ -163,7 +170,7 @@ const waHref = `https://wa.me/${BUSINESS.phoneE164.replace('+', '')}?text=${waMe
       if (!greeted) {
         bubble(
           'assistant',
-          'Ciao! Sono l’assistente di Simona. Chiedimi dei servizi, delle foto o di come metterti in contatto.',
+          'Ciao! Sono l’assistente virtuale di Simona, un’intelligenza artificiale. Chiedimi dei servizi, delle foto o di come metterti in contatto.',
         );
         greeted = true;
       }
