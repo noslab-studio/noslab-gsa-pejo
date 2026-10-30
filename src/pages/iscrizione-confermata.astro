@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { BUSINESS } from '../consts';
+---
+
+<BaseLayout
+  title="Iscrizione ricevuta"
+  description="Iscrizione alla newsletter ricevuta."
+  noindex={true}
+>
+  <div class="mx-auto max-w-2xl px-6 py-24 text-center">
+    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
+      Grazie! <span class="evidenzia">Iscrizione ricevuta</span>
+    </h1>
+    <p class="mt-5 text-lg text-neutral-700">
+      Riceverai consigli su digitale, social e fotografia, più le novità di GSA. Se cambi idea basta
+      scrivere a <a
+        class="decoration-brand underline decoration-2 underline-offset-4"
+        href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a
+      > e ti tolgo dall'elenco.
+    </p>
+    <div class="mt-8">
+      <a
+        href="/"
+        class="bg-brand text-ink rounded-full px-6 py-3 font-semibold transition hover:brightness-95"
+      >
+        Torna alla home
+      </a>
+    </div>
+  </div>
+</BaseLayout>

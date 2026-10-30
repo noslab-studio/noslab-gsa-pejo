@@ -20,7 +20,7 @@ export default defineConfig({
   integrations: [
     sitemap({
       // La pagina di ringraziamento è noindex: fuori dalla sitemap.
-      filter: (pagina) => !pagina.includes('/grazie'),
+      filter: (pagina) => !pagina.includes('/grazie') && !pagina.includes('/iscrizione-confermata'),
       changefreq: 'monthly',
       lastmod: new Date(),
       serialize(voce) {
