@@ -53,6 +53,24 @@ function json(obj, status = 200) {
   });
 }
 
+// Il pannello stampa la risposta con textContent, quindi i simboli markdown
+// resterebbero visibili. Il prompt chiede testo semplice ma il modello a volte
+// lo ignora: qui si tolgono comunque, tenendo il contenuto.
+function testoSemplice(testo) {
+  return testo
+    .replace(/```[a-z]*\n?/gi, '') // recinti dei blocchi di codice
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '$1 ($2)') // link: testo (indirizzo)
+    .replace(/(\*\*|__)(\S(?:.*?\S)?)\1/g, '$2') // grassetto
+    .replace(/(^|[\s(])\*(\S(?:[^*\n]*?\S)?)\*(?=[\s).,;:!?]|$)/gm, '$1$2') // corsivo con asterisco
+    .replace(/`([^`\n]+)`/g, '$1') // codice in linea
+    .replace(/^#{1,6}\s+/gm, '') // titoli
+    .replace(/^>\s?/gm, '') // citazioni
+    .replace(/^(\s*)[-*+]\s+/gm, '$1• ') // elenchi puntati
+    .replace(/^\s*([-*_])(\s*\1){2,}\s*$/gm, '') // linee orizzontali
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 // Tetto di messaggi per indirizzo IP in un'ora: protegge da abusi e da costi
 // imprevisti su un endpoint pubblico. Un utente normale resta molto sotto soglia.
 const LIMITE_ORARIO = 30;
@@ -121,11 +139,12 @@ export default async (req) => {
       system: KNOWLEDGE,
       messages,
     });
-    const reply = response.content
-      .filter((b) => b.type === 'text')
-      .map((b) => b.text)
-      .join('\n')
-      .trim();
+    const reply = testoSemplice(
+      response.content
+        .filter((b) => b.type === 'text')
+        .map((b) => b.text)
+        .join('\n'),
+    );
     return json({
       reply: reply || 'Su questo non saprei rispondere. Scrivi pure a Simona dai contatti!',
     });

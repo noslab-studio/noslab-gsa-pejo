@@ -145,7 +145,7 @@ const waHref = `https://wa.me/${BUSINESS.phoneE164.replace('+', '')}?text=${waMe
       wrap.className = 'flex ' + (role === 'user' ? 'justify-end' : 'justify-start');
       var b = document.createElement('div');
       b.className =
-        'max-w-[80%] rounded-2xl px-3 py-2 text-sm ' +
+        'max-w-[80%] whitespace-pre-line rounded-2xl px-3 py-2 text-sm ' +
         (role === 'user'
           ? 'bg-brand text-ink'
           : 'bg-white border border-neutral-200 text-neutral-800');
