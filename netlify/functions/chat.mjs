@@ -68,6 +68,7 @@ function testoSemplice(testo) {
     .replace(/^>\s?/gm, '') // citazioni
     .replace(/^(\s*)[-*+]\s+/gm, '$1• ') // elenchi puntati
     .replace(/^\s*([-*_])(\s*\1){2,}\s*$/gm, '') // linee orizzontali
+    .replace(/\s+[–—]\s+/g, ', ') // trattini lunghi: Simona non li vuole
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
