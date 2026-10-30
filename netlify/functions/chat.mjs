@@ -73,9 +73,12 @@ function testoSemplice(testo) {
 }
 
 // Limiti anti-abuso su un endpoint pubblico che costa a ogni richiesta.
-// Per visitatore in un'ora (un utente normale resta molto sotto) e per tutto
-// il sito in un giorno, così la spesa massima giornaliera è nota a priori.
+// Per visitatore in un'ora e in un giorno (un utente normale resta molto
+// sotto) e per tutto il sito in un giorno, così la spesa massima giornaliera
+// è nota a priori. Il tetto per visitatore è ben sotto quello del sito: un
+// solo indirizzo non può spegnere la chat a tutti.
 const LIMITE_ORARIO = 30;
+const LIMITE_VISITATORE_GIORNO = 60;
 const LIMITE_GIORNALIERO = 400;
 // Tetto ai caratteri di conversazione inviati al modello a ogni richiesta.
 const MAX_CARATTERI = 8000;
@@ -95,9 +98,10 @@ function impronta(req) {
     .slice(0, 16);
 }
 
-// Ogni richiesta scrive una chiave sua (giorno/ora/impronta/casuale) e poi
-// conta quelle già presenti: niente lettura-e-riscrittura dello stesso
-// contatore, quindi le richieste in parallelo non si scavalcano.
+// Ogni richiesta scrive una chiave sua e poi conta quelle presenti: niente
+// lettura-e-riscrittura dello stesso contatore, quindi le richieste in
+// parallelo non si scavalcano. Chiavi «v» per visitatore, chiavi «t» per il
+// totale del sito, scritte solo da chi ha superato il controllo per visitatore.
 // Se l'archivio non risponde si blocca: meglio una chat ferma che una spesa
 // senza tetto. Le chiavi vecchie le cancella ogni notte pulizia-chat.mjs.
 async function troppeRichieste(req) {
@@ -107,12 +111,16 @@ async function troppeRichieste(req) {
     const giorno = adesso.slice(0, 10); // AAAA-MM-GG
     const ora = adesso.slice(11, 13);
     const chi = impronta(req);
-    await store.set(`${giorno}/${ora}/${chi}/${randomUUID()}`, '');
 
-    const { blobs } = await store.list({ prefix: `${giorno}/` });
-    if (blobs.length > LIMITE_GIORNALIERO) return true;
-    const mie = blobs.filter((b) => b.key.startsWith(`${giorno}/${ora}/${chi}/`)).length;
-    return mie > LIMITE_ORARIO;
+    await store.set(`${giorno}/v/${chi}/${ora}/${randomUUID()}`, '');
+    const { blobs: mie } = await store.list({ prefix: `${giorno}/v/${chi}/` });
+    if (mie.length > LIMITE_VISITATORE_GIORNO) return true;
+    const nellOra = mie.filter((b) => b.key.startsWith(`${giorno}/v/${chi}/${ora}/`)).length;
+    if (nellOra > LIMITE_ORARIO) return true;
+
+    await store.set(`${giorno}/t/${randomUUID()}`, '');
+    const { blobs: tutte } = await store.list({ prefix: `${giorno}/t/` });
+    return tutte.length > LIMITE_GIORNALIERO;
   } catch {
     return true;
   }
@@ -120,13 +128,6 @@ async function troppeRichieste(req) {
 
 export default async (req) => {
   if (req.method !== 'POST') return json({ error: 'Metodo non consentito' }, 405);
-
-  if (await troppeRichieste(req)) {
-    return json(
-      { error: 'Abbiamo chiacchierato parecchio! Riprova più tardi o scrivi dai contatti.' },
-      429,
-    );
-  }
 
   let body;
   try {
@@ -159,6 +160,15 @@ export default async (req) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return json({ error: 'Assistente non ancora configurato. Scrivi pure dai contatti!' }, 503);
+  }
+
+  // Si conta solo ciò che arriverebbe davvero al modello: le richieste non
+  // valide non costano nulla e non devono consumare il tetto del sito.
+  if (await troppeRichieste(req)) {
+    return json(
+      { error: 'Abbiamo chiacchierato parecchio! Riprova più tardi o scrivi dai contatti.' },
+      429,
+    );
   }
 
   const client = new Anthropic({ apiKey });
