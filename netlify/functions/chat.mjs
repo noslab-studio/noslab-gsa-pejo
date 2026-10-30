@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { getStore } from '@netlify/blobs';
-import { createHmac, randomUUID } from 'node:crypto';
+import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 
 /**
  * Assistente AI del sito GSA di Grassi Simona Adele.
@@ -98,6 +98,18 @@ function impronta(req) {
     .slice(0, 16);
 }
 
+// La cronologia della chat sta nel browser: ogni risposta esce con una firma
+// HMAC e torna indietro con essa, così il server riconosce le proprie parole.
+const firmaRisposta = (testo) =>
+  createHmac('sha256', `${process.env.ANTHROPIC_API_KEY || 'gsa'}:risposte`)
+    .update(testo)
+    .digest('hex');
+
+function firmaValida(testo, firma) {
+  if (typeof firma !== 'string' || firma.length !== 64) return false;
+  return timingSafeEqual(Buffer.from(firma), Buffer.from(firmaRisposta(testo)));
+}
+
 // Ogni richiesta scrive una chiave sua e poi conta quelle presenti: niente
 // lettura-e-riscrittura dello stesso contatore, quindi le richieste in
 // parallelo non si scavalcano. Chiavi «v» per visitatore, chiavi «t» per il
@@ -143,9 +155,15 @@ export default async (req) => {
   }
   const messages = [];
   for (const m of incoming) {
-    if (!m || (m.role !== 'user' && m.role !== 'assistant')) continue;
-    const content = typeof m.content === 'string' ? m.content.trim().slice(0, 2000) : '';
-    if (content) messages.push({ role: m.role, content });
+    if (!m || typeof m.content !== 'string') continue;
+    if (m.role === 'user') {
+      const content = m.content.trim().slice(0, 2000);
+      if (content) messages.push({ role: 'user', content });
+    } else if (m.role === 'assistant' && firmaValida(m.content, m.firma)) {
+      // Solo risposte uscite davvero da qui: un «assistente» scritto dal
+      // client (sconti promessi, frasi offensive da fotografare) viene scartato.
+      messages.push({ role: 'assistant', content: m.content });
+    }
   }
   if (messages.length === 0 || messages[messages.length - 1].role !== 'user') {
     return json({ error: 'Conversazione non valida' }, 400);
@@ -185,9 +203,8 @@ export default async (req) => {
         .map((b) => b.text)
         .join('\n'),
     );
-    return json({
-      reply: reply || 'Su questo non saprei rispondere. Scrivi pure a Simona dai contatti!',
-    });
+    const testo = reply || 'Su questo non saprei rispondere. Scrivi pure a Simona dai contatti!';
+    return json({ reply: testo, firma: firmaRisposta(testo) });
   } catch {
     return json(
       { error: 'Ops, problema temporaneo. Riprova tra poco o scrivi dai contatti.' },

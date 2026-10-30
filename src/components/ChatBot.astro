@@ -231,7 +231,9 @@ const waHref = `https://wa.me/${BUSINESS.phoneE164.replace('+', '')}?text=${waMe
         .then(function (data) {
           var reply = (data && data.reply) || (data && data.error) || 'Ops, riprova tra poco.';
           typing.textContent = reply;
-          if (data && data.reply) history.push({ role: 'assistant', content: data.reply });
+          if (data && data.reply) {
+            history.push({ role: 'assistant', content: data.reply, firma: data.firma });
+          }
         })
         .catch(function () {
           typing.textContent = 'Connessione non riuscita. Riprova o scrivimi dai contatti.';
