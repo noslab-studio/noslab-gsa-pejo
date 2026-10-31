@@ -30,8 +30,10 @@ export const DEFAULT_OG_IMAGE = '/images/og-default.jpg';
 export const BUSINESS = {
   /** Ragione sociale (impresa individuale). */
   legalName: 'GSA di Grassi Simona Adele',
-  /** Titolare. */
+  /** Titolare, nell'ordine cognome-nome usato nei documenti. */
   ownerName: 'Grassi Simona Adele',
+  ownerGivenName: 'Simona Adele',
+  ownerFamilyName: 'Grassi',
   vatId: 'IT02609980228',
   email: 'gsa.gestione@gmail.com',
   phone: '+39 392 460 4341',
@@ -46,6 +48,8 @@ export const BUSINESS = {
     country: 'IT',
   },
   areaServed: ['Val di Pejo', 'Trentino', 'Provincia di Brescia', 'Provincia di Bergamo'],
+  /** Scheda Google dell'attività (recensioni e mappa). */
+  googleMapsUrl: 'https://www.google.com/maps?cid=5282185592699157041',
 } as const;
 
 /** Voci di navigazione principali. */

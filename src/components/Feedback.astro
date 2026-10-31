@@ -6,11 +6,13 @@
  * così restano aggiornate; altrimenti si usano quelle salvate qui sotto.
  * Non inserire recensioni non autentiche.
  */
+import { BUSINESS } from '../consts';
+
 const PLACE_ID = process.env.GOOGLE_PLACE_ID || 'ChIJXY0xltn5gkcRMfqEcs8XTkk';
 const PLACES_KEY = process.env.GOOGLE_PLACES_API_KEY;
 
 // Scheda Google (per leggere le recensioni) e modulo "scrivi una recensione".
-const GOOGLE_URL = 'https://www.google.com/maps?cid=5282185592699157041';
+const GOOGLE_URL = BUSINESS.googleMapsUrl;
 const WRITE_URL = `https://search.google.com/local/writereview?placeid=${PLACE_ID}`;
 
 // Fallback: recensioni reali correnti (usate se la Places API non è configurata).
