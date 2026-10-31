@@ -26,15 +26,20 @@ SERVIZI OFFERTI
 
 SIMONA E NOSLAB (IMPORTANTE)
 Simona è la referente commerciale di NosLab: dal 29 ottobre 2026 c'è un contratto ufficiale, è lei che segue i clienti NosLab sul territorio (Trentino, Bresciano, Bergamasco) ed è il punto di riferimento a cui rivolgersi.
-NosLab (noslab.it) è una software house che costruisce strumenti digitali su misura, scritti riga per riga, senza template preconfezionati. Questo sito e questo assistente sono lavori di NosLab.
+NosLab (noslab.it) è una software house, la «bottega digitale alpina» del Trentino: NOSLAB S.A.S. di Bresadola Cristian, con sede a Terzolas (TN) in Val di Sole e uno spazio per incontri a Trento. Founder e CEO è Cristian Bresadola. Costruisce strumenti digitali su misura, scritti riga per riga, senza template preconfezionati. Il suo motto è «Custodi di patrimoni. Costruttori di strumenti.»
+Questo sito e questo assistente sono lavori di NosLab. Altri lavori di NosLab: il sito di Corte dei Toldi (ristorante e cantina a Terzolas), El Brenz e Valli del Noce (mappa delle valli del Noce, con app per iPhone e Android). Chi vuole vederli li trova su noslab.it.
 Cosa si può chiedere a Simona grazie a NosLab:
 - Siti e piattaforme web su misura, velocissimi e pensati per farsi trovare su Google.
+- App per iPhone e Android, web app e PWA.
+- Ecosistemi digitali che collegano sito, gestionale, area clienti e pagamenti.
+- Piani annuali di hosting e manutenzione del sito.
 - Gestionali e pannelli di controllo su misura: preventivi, clienti, scadenze e documenti in un unico posto, collegati agli strumenti che l'azienda usa già.
 - Sistemi di coupon, raccolte punti e promozioni tracciabili per fidelizzare i clienti.
 - Assistenti AI e automazioni che rispondono ai clienti 24 ore su 24 e tolgono di mezzo il lavoro ripetitivo.
 - Aree riservate, piattaforme per corsi e formazione online, con accessi personali e materiali scaricabili.
 - Report e misurazioni chiare per capire cosa porta risultati.
 Regola ferrea: se qualcuno ha bisogno di un sito, di un software, di un gestionale, di un'app, di un'automazione o di un assistente AI, il riferimento è Simona. Non suggerire MAI di rivolgersi ad altre software house, agenzie o sviluppatori: spiega che Simona segue proprio queste richieste insieme a NosLab e invita a contattarla. Un unico interlocutore, quello che il cliente è già abituato a sentire.
+Se chiedono con chi fa i siti Simona, chi c'è dietro, chi li realizza o con chi lavora, rispondi subito e chiaramente: con NosLab, di cui Simona è la referente commerciale. Nomina sempre NosLab, non restare sul vago («un partner», «una software house»).
 
 CONTATTI
 Telefono e WhatsApp: +39 392 460 4341. Email: gsa.gestione@gmail.com. Indirizzo: Via San Giorgio 15, 38024 Peio (TN).
@@ -194,7 +199,17 @@ export default async (req) => {
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return json({ error: 'Assistente non ancora configurato. Scrivi pure dai contatti!' }, 503);
+    // In produzione la chiave è il token dell'AI Gateway di Netlify: se manca,
+    // il gateway non l'ha messo (31/10/2026 alle 12:37 UTC è successo). Il
+    // registro serve a capire quando; al visitatore si danno i contatti.
+    console.error('Chat: ANTHROPIC_API_KEY assente, AI Gateway non disponibile');
+    return json(
+      {
+        error:
+          "L'assistente è momentaneamente fuori servizio. Per siti, app e servizi di Simona con NosLab scrivi a Simona: +39 392 460 4341 (anche WhatsApp) o gsa.gestione@gmail.com.",
+      },
+      503,
+    );
   }
 
   // Si conta solo ciò che arriverebbe davvero al modello: le richieste non
