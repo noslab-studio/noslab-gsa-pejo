@@ -91,9 +91,9 @@ const linkBase =
 
   <script is:inline>
     (function () {
-      var header = document.getElementById('site-header');
+      const header = document.getElementById('site-header');
       if (!header) return;
-      var onScroll = function () {
+      const onScroll = function () {
         header.classList.toggle('is-scrolled', window.scrollY > 8);
       };
       onScroll();

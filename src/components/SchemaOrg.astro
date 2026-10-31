@@ -4,6 +4,7 @@
  * + Person (la titolare), collegati in un @graph. Presente su ogni pagina.
  */
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, BUSINESS, DEFAULT_OG_IMAGE } from '../consts';
+import logo from '../assets/logo-gsa.png';
 
 const businessId = `${SITE_URL}/#business`;
 const personId = `${SITE_URL}/#owner`;
@@ -15,8 +16,17 @@ const graph = {
       '@type': 'ProfessionalService',
       '@id': businessId,
       name: SITE_NAME,
+      legalName: BUSINESS.legalName,
       description: SITE_DESCRIPTION,
       url: SITE_URL,
+      // Il logo passa dalla pipeline immagini di Astro: l'indirizzo cambia solo
+      // se cambia il file.
+      logo: {
+        '@type': 'ImageObject',
+        url: new URL(logo.src, SITE_URL).href,
+        width: logo.width,
+        height: logo.height,
+      },
       image: new URL(DEFAULT_OG_IMAGE, SITE_URL).href,
       telephone: BUSINESS.phoneE164,
       email: BUSINESS.email,
@@ -30,6 +40,10 @@ const graph = {
         addressRegion: BUSINESS.address.province,
         addressCountry: BUSINESS.address.country,
       },
+      // Niente `geo`: servono le coordinate esatte della scheda Google, non una
+      // stima. La mappa della scheda basta a Google per collocare l'attività.
+      hasMap: BUSINESS.googleMapsUrl,
+      sameAs: [BUSINESS.googleMapsUrl],
       areaServed: BUSINESS.areaServed.map((name) => ({ '@type': 'AdministrativeArea', name })),
       knowsAbout: [
         'Pubblicità digitale',
@@ -43,6 +57,9 @@ const graph = {
       '@type': 'Person',
       '@id': personId,
       name: BUSINESS.ownerName,
+      givenName: BUSINESS.ownerGivenName,
+      familyName: BUSINESS.ownerFamilyName,
+      url: `${SITE_URL}/chi-sono/`,
       jobTitle: 'Consulente digitale e fotografa',
       worksFor: { '@id': businessId },
     },

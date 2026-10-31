@@ -312,9 +312,9 @@
 
 <script is:inline>
   (function () {
-    var coin = document.getElementById('nslb-coin');
-    var dlg = document.getElementById('nslb-video');
-    var video = document.getElementById('nslb-player');
+    const coin = document.getElementById('nslb-coin');
+    const dlg = document.getElementById('nslb-video');
+    const video = document.getElementById('nslb-player');
     if (!coin || !dlg || !video) return;
 
     function open() {
@@ -322,7 +322,7 @@
       if (!video.src) video.src = video.getAttribute('data-src');
       if (typeof dlg.showModal === 'function') dlg.showModal();
       else dlg.setAttribute('open', '');
-      var p = video.play();
+      const p = video.play();
       if (p && p.catch) {
         p.catch(function () {
           // Se l'autoplay con audio è bloccato, riparte senza audio.
