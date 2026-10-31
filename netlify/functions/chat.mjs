@@ -88,6 +88,13 @@ const LIMITE_MENSILE = 1500;
 // Tetto ai caratteri di conversazione inviati al modello a ogni richiesta.
 const MAX_CARATTERI = 8000;
 
+// Segreto delle impronte e delle firme: deve restare lo stesso nel tempo.
+// In produzione ANTHROPIC_API_KEY è il token dell'AI Gateway di Netlify, che
+// cambia almeno ogni 2 ore: usato qui, a ogni cambio le firme dei turni non
+// tornano più (il modello perde la conversazione) e le impronte cambiano (il
+// limite per visitatore riparte da zero). Il token resta solo come ripiego.
+const segreto = () => process.env.CHAT_SEGRETO || process.env.ANTHROPIC_API_KEY || 'gsa';
+
 // Chi scrive, senza conservarne l'IP: impronta HMAC con un segreto del server
 // (non ricostruibile dall'archivio). Per IPv6 conta il blocco /64, perché
 // un singolo utente ne controlla milioni di indirizzi.
@@ -97,18 +104,13 @@ function impronta(req) {
     (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() ||
     'sconosciuto';
   const rete = ip.includes(':') ? ip.split(':').slice(0, 4).join(':') : ip;
-  return createHmac('sha256', process.env.ANTHROPIC_API_KEY || 'gsa')
-    .update(rete)
-    .digest('hex')
-    .slice(0, 16);
+  return createHmac('sha256', segreto()).update(rete).digest('hex').slice(0, 16);
 }
 
 // La cronologia della chat sta nel browser: ogni risposta esce con una firma
 // HMAC e torna indietro con essa, così il server riconosce le proprie parole.
 const firmaRisposta = (testo) =>
-  createHmac('sha256', `${process.env.ANTHROPIC_API_KEY || 'gsa'}:risposte`)
-    .update(testo)
-    .digest('hex');
+  createHmac('sha256', `${segreto()}:risposte`).update(testo).digest('hex');
 
 function firmaValida(testo, firma) {
   if (typeof firma !== 'string' || firma.length !== 64) return false;
