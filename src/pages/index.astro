@@ -20,10 +20,15 @@ const services = (await getCollection('services')).sort((a, b) => a.data.ordine 
         </p>
         <h1 class="mt-4 text-4xl font-extrabold tracking-tight sm:text-6xl">
           Grassi <span class="evidenzia">Simona Adele</span>
+          {/* Il ruolo e il paese nell'H1: è il titolo che Google legge per primo. */}
+          <span
+            class="mt-4 block text-xl font-semibold tracking-normal text-neutral-700 sm:text-2xl"
+          >
+            Consulente digitale e fotografa a Peio
+          </span>
         </h1>
-        <p class="mt-5 max-w-xl text-lg text-neutral-700 sm:text-xl">
-          Consulente digitale e fotografa. Risolvo problemi con efficienza, chiarezza e tanta
-          energia.
+        <p class="mt-4 max-w-xl text-lg text-neutral-700 sm:text-xl">
+          Risolvo problemi con efficienza, chiarezza e tanta energia.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a
