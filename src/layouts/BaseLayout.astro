@@ -15,9 +15,10 @@ interface Props {
   image?: string;
   canonical?: string;
   noindex?: boolean;
+  follow?: boolean;
 }
 
-const { title, description, image, canonical, noindex } = Astro.props;
+const { title, description, image, canonical, noindex, follow } = Astro.props;
 ---
 
 <!doctype html>
@@ -27,7 +28,7 @@ const { title, description, image, canonical, noindex } = Astro.props;
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>
-    <BaseHead {title} {description} {image} {canonical} {noindex}>
+    <BaseHead {title} {description} {image} {canonical} {noindex} {follow}>
       <SchemaOrg />
       {/* JSON-LD specifico della pagina (opzionale). */}
       <slot name="jsonld" />

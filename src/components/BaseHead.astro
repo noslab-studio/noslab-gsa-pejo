@@ -15,8 +15,13 @@ interface Props {
   image?: string;
   /** Sovrascrive il canonical calcolato da Astro.url. */
   canonical?: string;
-  /** Indica ai crawler di non indicizzare (es. anteprime/deploy preview). */
+  /** Indica ai crawler di non indicizzare la pagina (404, ringraziamenti, pagine legali). */
   noindex?: boolean;
+  /**
+   * Con `noindex`: i crawler seguono comunque i link della pagina. Serve alle
+   * pagine legali, che restano fuori da Google ma linkano al resto del sito.
+   */
+  follow?: boolean;
 }
 
 const {
@@ -25,6 +30,7 @@ const {
   image = DEFAULT_OG_IMAGE,
   canonical,
   noindex = false,
+  follow = false,
 } = Astro.props;
 
 // title della pagina; se manca (home), nome e località.
@@ -43,9 +49,9 @@ const socialImage = new URL(image, Astro.site).href;
 {/* SEO */}
 <title>{pageTitle}</title>
 <meta name="description" content={description} />
-{/* Le pagine noindex (404, ringraziamenti) non hanno un indirizzo canonico. */}
+{/* Le pagine noindex (404, ringraziamenti, legali) non hanno un indirizzo canonico. */}
 {!noindex && <link rel="canonical" href={canonicalURL} />}
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+{noindex && <meta name="robots" content={follow ? 'noindex, follow' : 'noindex, nofollow'} />}
 
 {/* Favicon */}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -70,8 +76,8 @@ const socialImage = new URL(image, Astro.site).href;
 {
   /*
   Slot per lo structured data (JSON-LD).
-  Il layout inietta qui uno <script type="application/ld+json"> con
-  SportsClub / Organization / Event a seconda della pagina.
+  Il layout inietta qui il JSON-LD del sito (ProfessionalService + Person,
+  da SchemaOrg.astro) e quello specifico della pagina, se c'è.
 */
 }
 <slot />
