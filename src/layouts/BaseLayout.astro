@@ -73,14 +73,14 @@ const { title, description, image, canonical, noindex } = Astro.props;
     {/* Reveal allo scroll (IntersectionObserver, minimale). */}
     <script is:inline>
       (function () {
-        var els = document.querySelectorAll('.reveal, .evidenzia, .evidenzia-lime');
+        const els = document.querySelectorAll('.reveal, .evidenzia, .evidenzia-lime');
         if (!('IntersectionObserver' in window)) {
           els.forEach(function (el) {
             el.classList.add('is-visible');
           });
           return;
         }
-        var io = new IntersectionObserver(
+        const io = new IntersectionObserver(
           function (entries) {
             entries.forEach(function (e) {
               if (e.isIntersecting) {

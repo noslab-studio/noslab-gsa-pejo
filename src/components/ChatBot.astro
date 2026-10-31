@@ -134,23 +134,23 @@ const waHref = `https://wa.me/${BUSINESS.phoneE164.replace('+', '')}?text=${waMe
 
 <script is:inline>
   (function () {
-    var launcher = document.getElementById('chat-launcher');
-    var panel = document.getElementById('chat-panel');
-    var closeBtn = document.getElementById('chat-close');
-    var messagesEl = document.getElementById('chat-messages');
-    var form = document.getElementById('chat-form');
-    var input = document.getElementById('chat-input');
-    var sendBtn = document.getElementById('chat-send');
+    const launcher = document.getElementById('chat-launcher');
+    const panel = document.getElementById('chat-panel');
+    const closeBtn = document.getElementById('chat-close');
+    const messagesEl = document.getElementById('chat-messages');
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('chat-send');
     if (!launcher || !panel || !form || !input || !messagesEl) return;
 
-    var history = []; // {role, content} inviati all'API (solo scambi reali)
-    var greeted = false;
-    var busy = false;
+    const history = []; // {role, content} inviati all'API (solo scambi reali)
+    let greeted = false;
+    let busy = false;
 
     function bubble(role, text) {
-      var wrap = document.createElement('div');
+      const wrap = document.createElement('div');
       wrap.className = 'flex ' + (role === 'user' ? 'justify-end' : 'justify-start');
-      var b = document.createElement('div');
+      const b = document.createElement('div');
       b.className =
         'max-w-[80%] whitespace-pre-line rounded-2xl px-3 py-2 text-sm ' +
         (role === 'user'
@@ -207,7 +207,7 @@ const waHref = `https://wa.me/${BUSINESS.phoneE164.replace('+', '')}?text=${waMe
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var text = input.value.trim();
+      const text = input.value.trim();
       if (!text || busy) return;
       bubble('user', text);
       history.push({ role: 'user', content: text });
@@ -216,7 +216,7 @@ const waHref = `https://wa.me/${BUSINESS.phoneE164.replace('+', '')}?text=${waMe
 
       busy = true;
       sendBtn.disabled = true;
-      var typing = bubble('assistant', '…');
+      const typing = bubble('assistant', '…');
 
       fetch('/api/chat', {
         method: 'POST',
@@ -229,7 +229,7 @@ const waHref = `https://wa.me/${BUSINESS.phoneE164.replace('+', '')}?text=${waMe
           });
         })
         .then(function (data) {
-          var reply = (data && data.reply) || (data && data.error) || 'Ops, riprova tra poco.';
+          const reply = (data && data.reply) || (data && data.error) || 'Ops, riprova tra poco.';
           typing.textContent = reply;
           if (data && data.reply) {
             history.push({ role: 'assistant', content: data.reply, firma: data.firma });

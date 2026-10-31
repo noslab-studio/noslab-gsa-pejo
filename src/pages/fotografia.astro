@@ -248,11 +248,11 @@ const categorie = [
 
   <script is:inline>
     (function () {
-      var dlg = document.getElementById('lightbox');
-      var img = document.getElementById('lb-img');
+      const dlg = document.getElementById('lightbox');
+      const img = document.getElementById('lb-img');
       if (!dlg || !img) return;
-      var tiles = Array.prototype.slice.call(document.querySelectorAll('#showroom .tile'));
-      var idx = 0;
+      const tiles = Array.prototype.slice.call(document.querySelectorAll('#showroom .tile'));
+      let idx = 0;
       function show(i) {
         idx = (i + tiles.length) % tiles.length;
         img.src = tiles[idx].getAttribute('data-full');
