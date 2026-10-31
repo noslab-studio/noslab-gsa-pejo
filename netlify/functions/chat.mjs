@@ -75,12 +75,16 @@ function testoSemplice(testo) {
 
 // Limiti anti-abuso su un endpoint pubblico che costa a ogni richiesta.
 // Per visitatore in un'ora e in un giorno (un utente normale resta molto
-// sotto) e per tutto il sito in un giorno, così la spesa massima giornaliera
+// sotto) e per tutto il sito in un giorno e in un mese, così la spesa massima
 // è nota a priori. Il tetto per visitatore è ben sotto quello del sito: un
 // solo indirizzo non può spegnere la chat a tutti.
 const LIMITE_ORARIO = 30;
 const LIMITE_VISITATORE_GIORNO = 60;
 const LIMITE_GIORNALIERO = 400;
+// Con Haiku 4.5 una richiesta costa al massimo circa 0,007 dollari (circa
+// 4000 token in ingresso a 1 $/M, 600 in uscita a 5 $/M): 1500 richieste
+// fanno al massimo una decina di dollari al mese.
+const LIMITE_MENSILE = 1500;
 // Tetto ai caratteri di conversazione inviati al modello a ogni richiesta.
 const MAX_CARATTERI = 8000;
 
@@ -113,29 +117,41 @@ function firmaValida(testo, firma) {
 
 // Ogni richiesta scrive una chiave sua e poi conta quelle presenti: niente
 // lettura-e-riscrittura dello stesso contatore, quindi le richieste in
-// parallelo non si scavalcano. Chiavi «v» per visitatore, chiavi «t» per il
-// totale del sito, scritte solo da chi ha superato il controllo per visitatore.
+// parallelo non si scavalcano. Chiavi «v» per visitatore (con l'impronta,
+// cancellate ogni notte da pulizia-chat.mjs) e chiavi «mese» per il totale
+// del sito, scritte solo da chi ha superato il controllo per visitatore.
+// Le chiavi «mese» non contengono l'impronta e restano fino a fine mese: una
+// sola lista dà sia il totale del giorno sia quello del mese.
+// Restituisce 'pausa' o 'mese' se la richiesta va fermata, altrimenti null.
 // Se l'archivio non risponde si blocca: meglio una chat ferma che una spesa
-// senza tetto. Le chiavi vecchie le cancella ogni notte pulizia-chat.mjs.
-async function troppeRichieste(req) {
+// senza tetto.
+async function limiteSuperato(req) {
   try {
     const store = getStore({ name: 'chat-limiti', consistency: 'strong' });
     const adesso = new Date().toISOString();
     const giorno = adesso.slice(0, 10); // AAAA-MM-GG
+    const mese = adesso.slice(0, 7); // AAAA-MM
     const ora = adesso.slice(11, 13);
     const chi = impronta(req);
 
     await store.set(`${giorno}/v/${chi}/${ora}/${randomUUID()}`, '');
     const { blobs: mie } = await store.list({ prefix: `${giorno}/v/${chi}/` });
-    if (mie.length > LIMITE_VISITATORE_GIORNO) return true;
+    if (mie.length > LIMITE_VISITATORE_GIORNO) return 'pausa';
     const nellOra = mie.filter((b) => b.key.startsWith(`${giorno}/v/${chi}/${ora}/`)).length;
-    if (nellOra > LIMITE_ORARIO) return true;
+    if (nellOra > LIMITE_ORARIO) return 'pausa';
 
-    await store.set(`${giorno}/t/${randomUUID()}`, '');
-    const { blobs: tutte } = await store.list({ prefix: `${giorno}/t/` });
-    return tutte.length > LIMITE_GIORNALIERO;
+    const mia = `mese/${mese}/${giorno}/${randomUUID()}`;
+    await store.set(mia, '');
+    const { blobs: delMese } = await store.list({ prefix: `mese/${mese}/` });
+    const oggi = delMese.filter((b) => b.key.startsWith(`mese/${mese}/${giorno}/`)).length;
+    const esito =
+      delMese.length > LIMITE_MENSILE ? 'mese' : oggi > LIMITE_GIORNALIERO ? 'pausa' : null;
+    // Una richiesta respinta toglie la sua chiave: le chiavi del mese restano
+    // poco sopra il tetto anche sotto attacco, e la lista resta veloce.
+    if (esito) await store.delete(mia);
+    return esito;
   } catch {
-    return true;
+    return 'pausa';
   }
 }
 
@@ -183,11 +199,14 @@ export default async (req) => {
 
   // Si conta solo ciò che arriverebbe davvero al modello: le richieste non
   // valide non costano nulla e non devono consumare il tetto del sito.
-  if (await troppeRichieste(req)) {
-    return json(
-      { error: 'Abbiamo chiacchierato parecchio! Riprova più tardi o scrivi dai contatti.' },
-      429,
-    );
+  const limite = await limiteSuperato(req);
+  if (limite) {
+    // Il tetto del mese non si sblocca riprovando tra poco: si dice chiaro.
+    const error =
+      limite === 'mese'
+        ? "L'assistente ha finito le risposte di questo mese. Scrivi pure a Simona dai contatti o su WhatsApp!"
+        : 'Abbiamo chiacchierato parecchio! Riprova più tardi o scrivi dai contatti.';
+    return json({ error }, 429);
   }
 
   const client = new Anthropic({ apiKey });
