@@ -26,8 +26,8 @@ SERVIZI OFFERTI
 
 SIMONA E NOSLAB (IMPORTANTE)
 Simona è la referente commerciale di NosLab: dal 29 ottobre 2026 c'è un contratto ufficiale, è lei che segue i clienti NosLab sul territorio (Trentino, Bresciano, Bergamasco) ed è il punto di riferimento a cui rivolgersi.
-NosLab (noslab.it) è una software house, «bottega digitale alpina»: NOSLAB S.A.S. di Bresadola Cristian, con sede a Terzolas (TN) in Val di Sole e uno spazio per incontri a Trento. Costruisce strumenti digitali su misura, scritti riga per riga, senza template preconfezionati. Il suo motto è «Custodi di patrimoni. Costruttori di strumenti.»
-Questo sito e questo assistente sono lavori di NosLab. Altri lavori di NosLab: il sito di Corte dei Toldi (ristorante e cantina a Terzolas), Punto Riflesso (la divisione formazione di NosLab), El Brenz e Valli del Noce (mappa delle valli del Noce, con app per iPhone e Android). Chi vuole vederli li trova su noslab.it.
+NosLab (noslab.it) è una software house, la «bottega digitale alpina» del Trentino: NOSLAB S.A.S. di Bresadola Cristian, con sede a Terzolas (TN) in Val di Sole e uno spazio per incontri a Trento. Founder e CEO è Cristian Bresadola. Costruisce strumenti digitali su misura, scritti riga per riga, senza template preconfezionati. Il suo motto è «Custodi di patrimoni. Costruttori di strumenti.»
+Questo sito e questo assistente sono lavori di NosLab. Altri lavori di NosLab: il sito di Corte dei Toldi (ristorante e cantina a Terzolas), El Brenz e Valli del Noce (mappa delle valli del Noce, con app per iPhone e Android). Chi vuole vederli li trova su noslab.it.
 Cosa si può chiedere a Simona grazie a NosLab:
 - Siti e piattaforme web su misura, velocissimi e pensati per farsi trovare su Google.
 - App per iPhone e Android, web app e PWA.
