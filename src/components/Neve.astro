@@ -1,0 +1,286 @@
+---
+/**
+ * Neve che scende su tutto il sito. BaseLayout la inserisce solo quando la
+ * veste natalizia è accesa (vedi src/lib/natale.mjs).
+ *
+ * - Solo CSS: i fiocchi si muovono con animazioni di `transform`, che il
+ *   browser esegue sul compositor senza lavoro continuo sul thread principale.
+ * - I fiocchi sono generati qui, a build-time, con un generatore a seme fisso:
+ *   l'HTML è identico a ogni build e non serve JavaScript per crearli.
+ * - Decorativa: `aria-hidden`, `pointer-events: none`, sotto l'header e la chat.
+ * - Con «riduci movimento» del sistema i fiocchi restano fermi.
+ * - Un pulsante in basso a sinistra la toglie e la rimette (WCAG 2.2.2): la
+ *   scelta vale finché la scheda resta aperta (sessionStorage).
+ */
+import { SEGNO_VESTE } from '../lib/natale.mjs';
+
+/** Quanti fiocchi in tutto. Sugli schermi stretti se ne vedono i primi 20. */
+const FIOCCHI = 36;
+
+/** Generatore pseudo-casuale a seme fisso (mulberry32): stessi fiocchi a ogni build. */
+function generatore(seme: number) {
+  let t = seme;
+  return () => {
+    t = (t + 0x6d2b79f5) | 0;
+    let r = Math.imul(t ^ (t >>> 15), 1 | t);
+    r = (r + Math.imul(r ^ (r >>> 7), 61 | r)) ^ r;
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const caso = generatore(2512);
+const tra = (min: number, max: number) => min + caso() * (max - min);
+const arrotonda = (n: number) => Math.round(n * 100) / 100;
+
+const fiocchi = Array.from({ length: FIOCCHI }, (_, i) => {
+  // Un fiocco su sei è un cristallo a sei punte, gli altri sono palline morbide.
+  const cristallo = i % 6 === 2;
+  const dimensione = cristallo ? tra(10, 15) : tra(3, 7.5);
+  // I fiocchi più grandi sembrano più vicini, quindi cadono un po' più veloci.
+  const durata = tra(11, 15) + (cristallo ? 4 : 7.5 - dimensione);
+  const variabili = {
+    '--x': `${arrotonda(tra(0, 99))}%`,
+    '--y': `${arrotonda(tra(4, 96))}%`,
+    '--s': `${arrotonda(dimensione)}px`,
+    '--d': `${arrotonda(durata)}s`,
+    // Ritardo negativo: all'apertura della pagina la neve sta già cadendo.
+    '--r': `${arrotonda(-tra(0, durata))}s`,
+    '--a': `${arrotonda(tra(8, 26))}px`,
+    '--t': `${arrotonda(tra(3, 6))}s`,
+    '--o': `${arrotonda(tra(0.6, 0.95))}`,
+  };
+  const stile = Object.entries(variabili)
+    .map(([nome, valore]) => `${nome}:${valore}`)
+    .join(';');
+  return { cristallo, stile };
+});
+
+/** Cristallo di neve a sei bracci, ciascuno con una piccola «V» verso la punta. */
+const bracci = [0, 60, 120, 180, 240, 300]
+  .map((gradi) => {
+    const a = (gradi * Math.PI) / 180;
+    const punto = (distanza: number, lato: number) =>
+      `${arrotonda(Math.sin(a) * distanza + Math.cos(a) * lato)} ${arrotonda(Math.sin(a) * lato - Math.cos(a) * distanza)}`;
+    return `M0 0L${punto(10, 0)}M${punto(7.4, -2.8)}L${punto(5, 0)}L${punto(7.4, 2.8)}`;
+  })
+  .join('');
+
+const segno = { [SEGNO_VESTE]: '' };
+---
+
+{/* Applica subito la scelta della visita (neve tolta), prima di disegnare i fiocchi. */}
+<script is:inline>
+  (function () {
+    const radice = document.documentElement;
+    const CHIAVE = 'gsa-neve';
+    try {
+      if (sessionStorage.getItem(CHIAVE) === 'tolta') radice.classList.add('neve-tolta');
+    } catch {
+      // Storage non disponibile (es. navigazione privata rigida): la neve resta.
+    }
+    document.addEventListener('click', function (evento) {
+      const bersaglio = evento.target;
+      if (!(bersaglio instanceof Element) || !bersaglio.closest('[data-neve-interruttore]')) {
+        return;
+      }
+      const tolta = radice.classList.toggle('neve-tolta');
+      try {
+        if (tolta) sessionStorage.setItem(CHIAVE, 'tolta');
+        else sessionStorage.removeItem(CHIAVE);
+      } catch {
+        // Senza storage la scelta vale solo per questa pagina.
+      }
+    });
+  })();
+</script>
+
+{/* Forma del cristallo, riusata dai fiocchi e dall'icona del pulsante. */}
+<svg class="neve-simboli" width="0" height="0" aria-hidden="true" focusable="false">
+  {/* Il viewBox centra il cristallo: chi lo usa disegna in un riquadro 0 0 24 24. */}
+  <symbol id="gsa-cristallo" viewBox="-12 -12 24 24">
+    <path
+      d={bracci}
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"></path>
+  </symbol>
+</svg>
+
+<div class="neve" aria-hidden="true" {...segno}>
+  {
+    fiocchi.map((f) => (
+      <span class="fiocco" style={f.stile}>
+        {f.cristallo ? (
+          <span class="cristallo">
+            <svg viewBox="0 0 24 24">
+              <use href="#gsa-cristallo" />
+            </svg>
+          </span>
+        ) : (
+          <span class="pallina" />
+        )}
+      </span>
+    ))
+  }
+</div>
+
+<button
+  type="button"
+  data-neve-interruttore
+  class="neve-interruttore bg-ink focus-visible:outline-ink fixed bottom-5 left-5 z-40 h-12 w-12 items-center justify-center rounded-full text-white shadow-lg ring-1 ring-white/15 transition hover:brightness-125 focus-visible:outline-2 focus-visible:outline-offset-2"
+>
+  <svg viewBox="0 0 24 24" class="h-6 w-6" aria-hidden="true" focusable="false">
+    <use href="#gsa-cristallo"></use>
+    <path class="se-tolta barra" d="M3 21L21 3" stroke-width="2.6" stroke-linecap="round"></path>
+  </svg>
+  {/* Nome del pulsante: nascosto alla vista, compare come etichetta al passaggio o al focus. */}
+  <span class="neve-etichetta">
+    <span class="se-attiva">Togli la neve</span>
+    <span class="se-tolta">Rimetti la neve</span>
+  </span>
+</button>
+
+<style>
+  .neve-simboli {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .neve {
+    position: fixed;
+    inset: 0;
+    /* Sopra i contenuti, sotto l'header (z-30) e la chat (z-40 e z-50). */
+    z-index: 20;
+    overflow: hidden;
+    pointer-events: none;
+    contain: strict;
+  }
+
+  .fiocco {
+    position: absolute;
+    top: -20px;
+    left: var(--x);
+    opacity: var(--o);
+    animation: gsa-neve-cade var(--d) linear var(--r) infinite;
+  }
+
+  .fiocco > span {
+    display: block;
+    width: var(--s);
+    height: var(--s);
+    animation: gsa-neve-ondeggia var(--t) ease-in-out var(--r) infinite alternate;
+  }
+
+  /*
+   * Azzurro ghiaccio pieno, più chiaro al centro: una pallina bianca sul fondo
+   * bianco si vedrebbe solo come un anello. Sulle foto e sul footer scuro
+   * sembra comunque bianca.
+   */
+  .pallina {
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 38%, #f6f9fd 0 18%, #c6d6e9 100%);
+    box-shadow: 0 0 2px 0.5px rgb(150 175 210 / 0.55);
+  }
+
+  .cristallo {
+    color: #9fb9d6;
+    filter: drop-shadow(0 0 1.5px #fff);
+  }
+
+  .cristallo svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @keyframes gsa-neve-cade {
+    to {
+      transform: translate3d(0, calc(100vh + 40px), 0);
+    }
+  }
+
+  @keyframes gsa-neve-ondeggia {
+    from {
+      transform: translate3d(calc(var(--a) * -1), 0, 0) rotate(-30deg);
+    }
+    to {
+      transform: translate3d(var(--a), 0, 0) rotate(30deg);
+    }
+  }
+
+  /* Schermi stretti: meno fiocchi. */
+  @media (max-width: 639px) {
+    .fiocco:nth-of-type(n + 21) {
+      display: none;
+    }
+  }
+
+  /* «Riduci movimento»: la neve resta ferma, sparsa sulla pagina. */
+  @media (prefers-reduced-motion: reduce) {
+    .fiocco {
+      top: var(--y);
+      opacity: calc(var(--o) * 0.7);
+      animation: none;
+    }
+    .fiocco > span {
+      animation: none;
+    }
+  }
+
+  /* Pulsante: serve JavaScript, quindi compare solo con la classe "js". */
+  .neve-interruttore {
+    display: none;
+  }
+  :global(.js) .neve-interruttore {
+    display: flex;
+  }
+
+  /* Barra gialla sull'icona quando la neve è tolta. */
+  .barra {
+    stroke: var(--color-brand);
+  }
+
+  .se-tolta {
+    display: none;
+  }
+  :global(.neve-tolta) .neve {
+    display: none;
+  }
+  :global(.neve-tolta) .se-attiva {
+    display: none;
+  }
+  :global(.neve-tolta) .se-tolta {
+    display: inline;
+  }
+
+  /* Etichetta: nascosta come sr-only finché non si passa sopra o si arriva col Tab. */
+  .neve-etichetta {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .neve-interruttore:hover .neve-etichetta,
+  .neve-interruttore:focus-visible .neve-etichetta {
+    left: calc(100% + 0.5rem);
+    top: 50%;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    transform: translateY(-50%);
+    border-radius: 9999px;
+    background-color: var(--color-ink);
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.25;
+    box-shadow: 0 8px 20px -10px rgb(22 22 15 / 0.6);
+  }
+</style>
