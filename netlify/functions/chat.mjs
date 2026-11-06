@@ -102,6 +102,22 @@ const MAX_CARATTERI = 8000;
 // limite per visitatore riparte da zero). Il token resta solo come ripiego.
 const segreto = () => process.env.CHAT_SEGRETO || process.env.ANTHROPIC_API_KEY || 'gsa';
 
+// Token dell'AI Gateway e suo indirizzo, letti insieme: con il token ma senza
+// l'indirizzo la richiesta andrebbe ad Anthropic e verrebbe respinta. Alla
+// prima richiesta di un'istanza appena avviata a volte non ci sono ancora
+// (31/10 e 6/11/2026, sempre dopo una pausa della chat): si guarda anche in
+// Netlify.env e, se mancano, si riprova due volte entro un secondo.
+const leggi = (nome) => globalThis.Netlify?.env?.get?.(nome) || process.env[nome];
+
+async function credenzialiGateway() {
+  for (const attesa of [0, 300, 700]) {
+    if (attesa) await new Promise((fatto) => setTimeout(fatto, attesa));
+    const apiKey = leggi('ANTHROPIC_API_KEY');
+    if (apiKey) return { apiKey, baseURL: leggi('ANTHROPIC_BASE_URL') || undefined };
+  }
+  return null;
+}
+
 // Chi scrive, senza conservarne l'IP: impronta HMAC con un segreto del server
 // (non ricostruibile dall'archivio). Per IPv6 conta il blocco /64, perché
 // un singolo utente ne controlla milioni di indirizzi.
@@ -201,11 +217,11 @@ export default async (req) => {
     totale -= messages.shift().content.length;
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    // In produzione la chiave è il token dell'AI Gateway di Netlify: se manca,
-    // il gateway non l'ha messo (31/10/2026 alle 12:37 UTC è successo). Il
-    // registro serve a capire quando; al visitatore si danno i contatti.
+  const credenziali = await credenzialiGateway();
+  if (!credenziali) {
+    // Il gateway non ha messo il token nemmeno dopo i tentativi. Il registro
+    // serve a capire quando; al visitatore si danno i contatti, e il pannello
+    // riprova una volta da solo. Si risponde prima dei limiti: non costa nulla.
     console.error('Chat: ANTHROPIC_API_KEY assente, AI Gateway non disponibile');
     return json(
       {
@@ -228,7 +244,7 @@ export default async (req) => {
     return json({ error }, 429);
   }
 
-  const client = new Anthropic({ apiKey });
+  const client = new Anthropic(credenziali);
   try {
     const response = await client.messages.create({
       model: process.env.CHAT_MODEL || 'claude-haiku-5-5',
