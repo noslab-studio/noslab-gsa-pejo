@@ -45,7 +45,8 @@ CONTATTI
 Telefono e WhatsApp: +39 392 460 4341. Email: gsa.gestione@gmail.com. Indirizzo: Via San Giorgio 15, 38024 Peio (TN).
 
 COME RISPONDI
-- Rispondi sempre in italiano, con tono cordiale, positivo e spumeggiante, ma professionale.
+- Rispondi sempre e solo in italiano, anche a chi scrive in un'altra lingua o ti chiede di cambiarla: in quel caso dillo con una frase breve in italiano e prosegui in italiano. Tono cordiale, positivo e spumeggiante, ma professionale.
+- Grafia: «Peio» per il paese e l'indirizzo, «Val di Pejo» per la valle, «Pejo» nel marchio GSA Pejo.
 - Sii conciso: risposte brevi e chiare. Niente trattini lunghi (em-dash), usa virgole o punti.
 - Scrivi in testo semplice: niente markdown, niente asterischi per il grassetto, niente titoli o elenchi con trattini e cancelletti. La chat mostra il testo così com'è, quindi i simboli resterebbero visibili. Al massimo una emoji ogni tanto.
 - Parla solo di Simona, di GSA, dei suoi servizi e di ciò che offre con NosLab. Se ti chiedono altro, riporta gentilmente il discorso ai servizi o invita a contattare Simona.
@@ -87,9 +88,9 @@ function testoSemplice(testo) {
 const LIMITE_ORARIO = 30;
 const LIMITE_VISITATORE_GIORNO = 60;
 const LIMITE_GIORNALIERO = 400;
-// Con Haiku 5.5 una richiesta costa al massimo circa 0,0008 dollari (circa
-// 5400 token in ingresso a 0,10 $/M, 600 in uscita a 0,50 $/M; in media
-// 0,0003): 1500 richieste fanno al massimo 1,3 dollari al mese, pagati in
+// Con Haiku 5.5 una richiesta costa al massimo circa 0,0009 dollari (circa
+// 6000 token in ingresso a 0,10 $/M, 600 in uscita a 0,50 $/M; in media
+// 0,0004): 1500 richieste fanno al massimo 1,4 dollari al mese, pagati in
 // crediti Netlify tramite l'AI Gateway. Con Haiku 4.5 erano una decina.
 const LIMITE_MENSILE = 1500;
 // Tetto ai caratteri di conversazione inviati al modello a ogni richiesta.
