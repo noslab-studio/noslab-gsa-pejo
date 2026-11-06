@@ -218,16 +218,29 @@ const waHref = `https://wa.me/${BUSINESS.phoneE164.replace('+', '')}?text=${waMe
       sendBtn.disabled = true;
       const typing = bubble('assistant', '…');
 
-      fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ messages: history }),
-      })
-        .then(function (r) {
+      // 503: la funzione appena avviata non aveva ancora il token del gateway.
+      // Si riprova una volta da soli: di solito la seconda richiesta passa, e
+      // il 503 arriva prima dei limiti, quindi non consuma il tetto.
+      function chiedi(tentativo) {
+        return fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ messages: history }),
+        }).then(function (r) {
+          if (r.status === 503 && tentativo === 0) {
+            return new Promise(function (fatto) {
+              setTimeout(fatto, 1200);
+            }).then(function () {
+              return chiedi(1);
+            });
+          }
           return r.json().catch(function () {
             return {};
           });
-        })
+        });
+      }
+
+      chiedi(0)
         .then(function (data) {
           const reply = (data && data.reply) || (data && data.error) || 'Ops, riprova tra poco.';
           typing.textContent = reply;
