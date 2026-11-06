@@ -1,0 +1,87 @@
+---
+/**
+ * Piccolo albero di Natale dorato con gli auguri di GSA e NosLab.
+ * Sta nell'hero della home come una cartolina appoggiata sull'angolo della foto
+ * (posizione assoluta: non sposta nulla, niente layout shift). La home la
+ * inserisce solo quando la veste natalizia è accesa (vedi src/lib/natale.mjs).
+ *
+ * Testo giallo e bianco su fondo inchiostro: contrasto AA ampiamente superato
+ * (giallo su inchiostro circa 13:1, bianco circa 18:1).
+ */
+---
+
+<div
+  class="albero-auguri bg-ink ring-brand/50 absolute -top-9 right-2 z-10 flex rotate-3 items-center gap-2.5 rounded-2xl py-2.5 pr-4 pl-2.5 shadow-xl ring-2 sm:-top-10 sm:-right-5 sm:gap-3 sm:pr-5 sm:pl-3"
+>
+  <svg
+    viewBox="0 0 64 80"
+    class="h-14 w-auto shrink-0 sm:h-16"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <defs>
+      <linearGradient id="gsa-oro" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#fff3a3"></stop>
+        <stop offset="0.45" stop-color="#ffdd00"></stop>
+        <stop offset="1" stop-color="#c79800"></stop>
+      </linearGradient>
+    </defs>
+    {/* Tronco */}
+    <rect x="28.5" y="61" width="7" height="10" rx="1.5" fill="#a87d00"></rect>
+    {/* Tre palchi dorati, dal basso: il bordo inchiostro li separa. */}
+    <path
+      d="M32 36L57 62Q44.5 66.5 32 62Q19.5 66.5 7 62Z"
+      fill="url(#gsa-oro)"
+      stroke="#16160f"
+      stroke-width="1.2"
+      stroke-linejoin="round"></path>
+    <path
+      d="M32 22L50 46Q41 50 32 46Q23 50 14 46Z"
+      fill="url(#gsa-oro)"
+      stroke="#16160f"
+      stroke-width="1.2"
+      stroke-linejoin="round"></path>
+    <path
+      d="M32 11L44 31Q38 34 32 31Q26 34 20 31Z"
+      fill="url(#gsa-oro)"
+      stroke="#16160f"
+      stroke-width="1.2"
+      stroke-linejoin="round"></path>
+    {/* Festoni lime */}
+    <path
+      d="M19 38Q31 43.5 44 35.5M13 54Q31 61 51 51"
+      fill="none"
+      stroke="#9ee13a"
+      stroke-width="1.6"
+      stroke-linecap="round"></path>
+    {/* Palline lime e bianche */}
+    <g stroke="#16160f" stroke-width="0.8">
+      <circle cx="29" cy="26.5" r="2" fill="#ffffff"></circle>
+      <circle cx="24" cy="42" r="2.3" fill="#9ee13a"></circle>
+      <circle cx="40" cy="40" r="2.1" fill="#ffffff"></circle>
+      <circle cx="32" cy="51.5" r="2.3" fill="#ffffff"></circle>
+      <circle cx="18" cy="58" r="2.3" fill="#ffffff"></circle>
+      <circle cx="46" cy="56.5" r="2.4" fill="#9ee13a"></circle>
+    </g>
+    {/* Stella */}
+    <path
+      d="M32 1.5L33.59 5.82L38.18 5.99L34.57 8.83L35.82 13.26L32 10.7L28.18 13.26L29.43 8.83L25.82 5.99L30.41 5.82Z"
+      fill="#fff6bf"
+      stroke="#ffdd00"
+      stroke-width="0.8"
+      stroke-linejoin="round"></path>
+  </svg>
+  <p class="leading-tight">
+    <span class="text-brand block text-lg font-extrabold tracking-tight sm:text-xl">
+      Buone feste
+    </span>
+    <span class="block text-sm font-semibold text-white">da GSA e NosLab</span>
+  </p>
+</div>
+
+<style>
+  /* Alone dorato attorno all'albero: statico, nessuna animazione. */
+  .albero-auguri svg {
+    filter: drop-shadow(0 0 6px rgb(255 221 0 / 0.45));
+  }
+</style>

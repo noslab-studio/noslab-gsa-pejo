@@ -5,7 +5,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE_DESCRIPTION, BUSINESS } from '../consts';
 import Feedback from '../components/Feedback.astro';
 import NosLabCoin from '../components/NosLabCoin.astro';
+import AlberoAuguri from '../components/AlberoAuguri.astro';
+import { vesteNataliziaAccesa } from '../lib/natale.mjs';
 import hero from '../assets/hero-venezia.jpg';
+
+/** Albero con gli auguri: solo nel periodo delle feste, vedi src/lib/natale.mjs. */
+const vesteNatalizia = vesteNataliziaAccesa(process.env);
 
 const services = (await getCollection('services')).sort((a, b) => a.data.ordine - b.data.ordine);
 ---
@@ -60,6 +65,7 @@ const services = (await getCollection('services')).sort((a, b) => a.data.ordine 
         <span
           class="bg-brand-lime absolute -bottom-4 -left-4 -z-10 h-24 w-24 rounded-3xl sm:h-32 sm:w-32"
           aria-hidden="true"></span>
+        {vesteNatalizia && <AlberoAuguri />}
       </div>
     </div>
   </section>
