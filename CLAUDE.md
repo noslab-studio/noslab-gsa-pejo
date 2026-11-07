@@ -27,7 +27,9 @@ attualmente su https://gsa-pejo.com/.
 ## Stack
 
 - **Astro** (output statico) + **Tailwind CSS v4** + **TypeScript strict**
-- Content Collections (schema Zod) per `projects` (case study) e `services`
+- Content Collections (schema Zod) per `services`. La collection `projects` (case study)
+  è stata tolta il 7/11/2026 perché mai usata: se servono case study, si recupera dalla
+  storia git di `src/content.config.ts`.
 - Deploy su **Netlify** (build statica)
 - Lingua: **it**. Package manager: **npm**.
 
@@ -71,8 +73,8 @@ Vale per questo progetto e per i clienti futuri:
   (niente org separata per cliente; owner = account `NosLab-Sas`).
 - **Naming repo**: `noslab-<cliente>-<progetto>` (es. `noslab-gsa-pejo`).
   Repo interni NosLab: `noslab-<tool>` (es. `noslab-cms`, `noslab-team`).
-- **Regola d'oro**: *1 cliente = 1 repo `noslab-<cliente>-…` + 1 site Netlify
-  (team `noslab-sas`) + accesso **Read** scoped al solo repo per il cliente.*
+- **Regola d'oro**: _1 cliente = 1 repo `noslab-<cliente>-…` + 1 site Netlify
+  (team `noslab-sas`) + accesso **Read** scoped al solo repo per il cliente._
 - **Permessi**: team interno `staff` con accesso completo; ai clienti si dà accesso
   come **Outside Collaborator** in sola lettura **solo** sul loro repo (mai membri
   pieni dell'org → non vedono gli altri clienti né gli strumenti interni).
