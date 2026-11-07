@@ -2,3 +2,6 @@ dist/
 .astro/
 node_modules/
 package-lock.json
+# Modulo della liberatoria: testo in attesa di una revisione legale, non va
+# toccato nemmeno dalla formattazione automatica.
+public/modulo-liberatoria.html

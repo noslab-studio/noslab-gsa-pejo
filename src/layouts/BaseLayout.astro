@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -49,12 +50,24 @@ const vesteNatalizia = vesteNataliziaAccesa(process.env);
         radial-gradient(34rem 34rem at 102% 12%, rgba(158,225,58,0.13), transparent 60%),
         radial-gradient(30rem 30rem at 50% 108%, rgba(255,221,0,0.10), transparent 60%);"
     >
-      {/* Logo GSA in filigrana, tenue, presente su ogni pagina. */}
-      <img
-        src={logo.src}
+      {
+        /*
+          Logo GSA in filigrana, tenue, presente su ogni pagina. In AVIF e alla
+          misura mostrata: era il PNG originale da 43 KiB, e su fotografia e
+          contatti è l'elemento più grande della prima schermata (LCP). AVIF
+          perché con la trasparenza il WebP pesa quasi come il PNG (39 KiB contro
+          13 a 480px); se un browser molto vecchio non lo legge, sparisce solo la
+          filigrana decorativa.
+        */
+      }
+      <Image
+        src={logo}
         alt=""
-        width={logo.width}
-        height={logo.height}
+        widths={[240, 360, 480]}
+        sizes="min(46vmin, 440px)"
+        format="avif"
+        quality={40}
+        loading="eager"
         class="absolute top-1/2 -right-[6vmin] w-[46vmin] max-w-[440px] -translate-y-1/2 rotate-6 opacity-[0.06]"
       />
     </div>

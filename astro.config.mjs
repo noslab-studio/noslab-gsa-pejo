@@ -51,6 +51,9 @@ export default defineConfig({
   // grassetto che va a capo (Prettier li spezza così): uscivano parole
   // incollate come «nellaCookie Policy». Netlify comprime comunque con gzip/brotli.
   compressHTML: false,
+  // Provato il 7/11/2026 `build.inlineStylesheets: 'always'` (CSS dentro la
+  // pagina): LCP invariato in Lighthouse, 9 KiB in più per pagina e niente
+  // cache fra le pagine. Si resta sui file CSS separati.
 
   vite: {
     plugins: [tailwindcss()],
