@@ -108,6 +108,13 @@ const categorie = [
         Passa sopra un'immagine e clicca per aprirla a schermo intero.
       </p>
 
+      {
+        /*
+          Misure delle foto (sizes) calcolate sulla griglia: 2 colonne sotto i 640px,
+          3 sopra, contenitore di 1152px meno margini e spazi. Prima il browser
+          scaricava foto larghe il doppio del necessario (circa 360 KiB in più su mobile).
+        */
+      }
       <div id="showroom" class="showroom mt-12 columns-2 gap-4 sm:columns-3 lg:gap-6">
         {
           items.map((it, i) => (
@@ -121,8 +128,8 @@ const categorie = [
               <Image
                 src={it.img}
                 alt={it.alt}
-                widths={[300, 500, 800]}
-                sizes="(min-width: 1024px) 30vw, 45vw"
+                widths={[320, 400, 560, 720]}
+                sizes="(min-width: 1152px) 352px, (min-width: 1024px) calc(33vw - 32px), (min-width: 640px) calc(33vw - 27px), calc(50vw - 32px)"
                 class="w-full object-cover transition duration-500 group-hover:scale-[1.06]"
                 loading={i < 4 ? 'eager' : 'lazy'}
               />

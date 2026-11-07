@@ -52,12 +52,20 @@ const services = (await getCollection('services')).sort((a, b) => a.data.ordine 
         </div>
       </div>
 
-      <div class="reveal relative">
+      {
+        /*
+          Niente animazione di comparsa sulla foto: è l'elemento più grande della
+          prima schermata (LCP) e con la dissolvenza Lighthouse la contava quasi
+          un secondo dopo. Misure: colonna di 468px su desktop, piena larghezza
+          meno i margini sotto i 1024px.
+        */
+      }
+      <div class="relative">
         <Image
           src={hero}
           alt="Simona Grassi con la macchina fotografica su una gondola a Venezia"
-          widths={[400, 700, 1000]}
-          sizes="(min-width: 1024px) 40vw, 90vw"
+          widths={[480, 640, 960]}
+          sizes="(min-width: 1024px) 468px, calc(100vw - 48px)"
           class="aspect-[4/3] w-full rounded-3xl object-cover shadow-xl"
           loading="eager"
           fetchpriority="high"
