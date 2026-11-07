@@ -28,6 +28,19 @@ const esc = (s) =>
     (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
   );
 
+// Link solo per recapiti puliti. I dati arrivano da moduli pubblici: un
+// «indirizzo» come mario@example.it?bcc=altro@example.net aprirebbe una mail
+// con un destinatario nascosto. Quelli che non tornano si mostrano come testo.
+const EMAIL_PULITA = /^[^\s@?&#<>"'/\\]+@[^\s@?&#<>"'/\\]+\.[a-z]{2,}$/i;
+const TELEFONO_PULITO = /^[+0-9 ().-]{5,20}$/;
+
+const linkEmail = (email) =>
+  EMAIL_PULITA.test(email) ? `<a href="mailto:${esc(email)}">${esc(email)}</a>` : esc(email);
+const linkTelefono = (tel) =>
+  TELEFONO_PULITO.test(tel)
+    ? `<a href="tel:${esc(tel.replace(/[^+0-9]/g, ''))}">${esc(tel)}</a>`
+    : esc(tel);
+
 const dataIt = (iso) =>
   iso ? new Date(iso).toLocaleDateString('it-IT', { timeZone: 'Europe/Rome' }) : '';
 
@@ -47,8 +60,8 @@ function pagina(leads) {
       .map((l) => {
         const urgente = daRichiamare(l, oggi);
         const recapiti = [
-          l.email ? `<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>` : '',
-          l.telefono ? `<a href="tel:${esc(l.telefono)}">${esc(l.telefono)}</a>` : '',
+          l.email ? linkEmail(l.email) : '',
+          l.telefono ? linkTelefono(l.telefono) : '',
         ]
           .filter(Boolean)
           .join(' · ');
@@ -174,9 +187,12 @@ function sessioneValida(req, chiave) {
 
 export default async (req) => {
   const url = new URL(req.url);
-  const chiave = process.env.LEAD_ADMIN_TOKEN || process.env.LEAD_WEBHOOK_TOKEN;
+  // Chiave propria della pagina, di almeno 32 caratteri, separata dal token del
+  // webhook: ogni segreto serve a una cosa sola.
+  const chiave = process.env.LEAD_ADMIN_TOKEN;
   const headers = {
     'content-type': 'text/html; charset=utf-8',
+    'x-content-type-options': 'nosniff',
     'x-robots-tag': 'noindex',
     'cache-control': 'no-store',
     'referrer-policy': 'no-referrer',
@@ -190,7 +206,9 @@ export default async (req) => {
       headers: { ...headers, location: '/api/contatti', ...extra },
     });
 
-  if (!chiave) return new Response('<h1>Non configurato</h1>', { status: 503, headers });
+  if (!chiave || chiave.length < 32) {
+    return new Response('<h1>Non configurato</h1>', { status: 503, headers });
+  }
 
   let form = null;
   if (req.method === 'POST') {
