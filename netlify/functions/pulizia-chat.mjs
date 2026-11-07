@@ -25,7 +25,11 @@ export default async () => {
   const vecchie = blobs.filter((b) =>
     b.key.startsWith('mese/') ? b.key.slice(5, 12) < meseCorrente : b.key.slice(0, 10) < oggi,
   );
-  await Promise.all(vecchie.map((b) => store.delete(b.key)));
+  // A blocchi da 100: anche dopo giorni di abuso, con migliaia di chiavi, le
+  // cancellazioni non partono tutte insieme e la funzione resta nei tempi.
+  for (let i = 0; i < vecchie.length; i += 100) {
+    await Promise.all(vecchie.slice(i, i + 100).map((b) => store.delete(b.key)));
+  }
   console.log(`Pulizia chat: cancellate ${vecchie.length} chiavi su ${blobs.length}.`);
   return new Response('ok', { status: 200 });
 };

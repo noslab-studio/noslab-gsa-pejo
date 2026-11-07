@@ -1,4 +1,5 @@
 import { getStore } from '@netlify/blobs';
+import { timingSafeEqual } from 'node:crypto';
 
 /**
  * Salva ogni contatto ricevuto dai moduli in un elenco leggero (archivio Netlify),
@@ -13,8 +14,23 @@ import { getStore } from '@netlify/blobs';
  */
 export const config = { path: '/api/lead-ingest' };
 
+// Gli header di netlify.toml non arrivano alle Functions: vanno messi qui.
 const risposta = (obj, status = 200) =>
-  new Response(JSON.stringify(obj), { status, headers: { 'content-type': 'application/json' } });
+  new Response(JSON.stringify(obj), {
+    status,
+    headers: {
+      'content-type': 'application/json',
+      'x-content-type-options': 'nosniff',
+      'cache-control': 'no-store',
+    },
+  });
+
+/** Confronto a tempo costante: la durata non rivela quanti caratteri tornano. */
+const uguali = (a, b) => {
+  const x = Buffer.from(String(a ?? ''));
+  const y = Buffer.from(String(b ?? ''));
+  return x.length === y.length && timingSafeEqual(x, y);
+};
 
 /** Ricava i dati del contatto dal payload di Netlify, qualunque forma abbia. */
 function estraiContatto(body) {
@@ -51,7 +67,7 @@ export default async (req) => {
   // Endpoint pubblico: si autentica con un token nella query string.
   const atteso = process.env.LEAD_WEBHOOK_TOKEN;
   const ricevuto = new URL(req.url).searchParams.get('token');
-  if (!atteso || ricevuto !== atteso) return risposta({ error: 'Non autorizzato' }, 401);
+  if (!atteso || !uguali(ricevuto, atteso)) return risposta({ error: 'Non autorizzato' }, 401);
 
   let body;
   try {
